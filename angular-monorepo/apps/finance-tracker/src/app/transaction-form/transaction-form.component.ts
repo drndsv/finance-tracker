@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -10,16 +10,28 @@ import {
   Validators,
 } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
-import { TuiButton, TuiGroup, TuiTextfield } from '@taiga-ui/core';
 import {
-  TuiBlock, TuiCheckbox,
+  TuiAlertService,
+  TuiButton, TuiError,
+  TuiGroup,
+  TuiTextfield,
+} from '@taiga-ui/core';
+import {
+  TuiBlock,
+  TuiCheckbox,
   TuiChevron,
-  TuiDataListWrapper, TuiInputDate, TuiInputNumber,
+  TuiDataListWrapper,
+  TuiFieldErrorPipe,
+  TuiInputDate,
+  TuiInputNumber,
   TuiRadio,
-  TuiSelect, TuiTextarea, TuiTextareaLimit,
+  TuiSelect,
+  TuiTextarea,
+  TuiTextareaLimit,
+  tuiValidationErrorsProvider,
 } from '@taiga-ui/kit';
 import { startWith } from 'rxjs';
-import { CurrencyPipe } from '@angular/common';
+import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import { TuiDay } from '@taiga-ui/cdk';
 import { CommentValidatorsDirective } from '../directives/comment-validators.directive';
 
@@ -64,6 +76,18 @@ function notFutureDateValidator(): ValidatorFn {
     TuiTextarea,
     TuiTextareaLimit,
     TuiCheckbox,
+    TuiError,
+    TuiFieldErrorPipe,
+    AsyncPipe,
+  ],
+  providers: [
+    tuiValidationErrorsProvider({
+      required: 'Заполните это поле',
+      min: 'Введите неотрицательное число',
+      max: 'Сумма не должна превышать 10 000 000 ₽',
+      maxlength: 'Комментарий не должен быть длиннее 100 символов',
+      futureDate: 'Нельзя выбрать дату из будущего',
+    }),
   ],
   templateUrl: './transaction-form.component.html',
   styleUrl: './transaction-form.component.less',
@@ -85,6 +109,8 @@ export class TransactionFormComponent {
     'Развлечения',
     'Жильё',
   ];
+
+  private readonly alerts = inject(TuiAlertService);
 
   readonly maxDate = TuiDay.currentLocal();
 
@@ -180,6 +206,13 @@ export class TransactionFormComponent {
       return;
     }
 
-    console.log('Шаг 5 готов:', this.form.getRawValue());
+    this.alerts
+      .open('Транзакция успешно сохранена', {
+        appearance: 'success',
+        label: 'Успех',
+      })
+      .subscribe();
+
+    console.log('Форма валидна:', this.form.getRawValue());
   }
 }

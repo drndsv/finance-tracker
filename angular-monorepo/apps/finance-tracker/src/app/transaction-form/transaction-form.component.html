@@ -26,10 +26,8 @@
       </label>
     </div>
 
-    @if (typeControl.touched && typeControl.hasError('required')) {
-      <div class="error">
-        Выберите тип транзакции: доход или расход
-      </div>
+    @if (typeControl.touched) {
+      <tui-error [formControl]="typeControl" [error]="[] | tuiFieldError | async" />
     }
   </div>
 
@@ -51,10 +49,9 @@
       />
     </tui-textfield>
 
-    @if (categoryControl.touched && categoryControl.hasError('required')) {
-      <div class="error">
-        Укажите категорию транзакции
-      </div>
+
+    @if (categoryControl.touched) {
+      <tui-error [formControl]="categoryControl" [error]="[] | tuiFieldError | async" />
     }
   </div>
 
@@ -77,22 +74,8 @@
       </div>
     }
 
-    @if (amountControl.touched && amountControl.hasError('required')) {
-      <div class="error">
-        Укажите сумму транзакции
-      </div>
-    }
-
-    @if (amountControl.touched && amountControl.hasError('min')) {
-      <div class="error">
-        Сумма не может быть отрицательной
-      </div>
-    }
-
-    @if (amountControl.touched && amountControl.hasError('max')) {
-      <div class="error">
-        Сумма слишком большая: максимум 10 000 000
-      </div>
+    @if (amountControl.touched) {
+      <tui-error [formControl]="amountControl" [error]="[] | tuiFieldError | async" />
     }
   </div>
 
@@ -111,22 +94,8 @@
       <tui-calendar *tuiTextfieldDropdown />
     </tui-textfield>
 
-    @if (
-      transactionDateControl.touched &&
-      transactionDateControl.hasError('required')
-      ) {
-      <div class="error">
-        Укажите дату транзакции
-      </div>
-    }
-
-    @if (
-      transactionDateControl.touched &&
-      transactionDateControl.hasError('futureDate')
-      ) {
-      <div class="error">
-        Нельзя выбрать дату из будущего
-      </div>
+    @if (transactionDateControl.touched) {
+      <tui-error [formControl]="transactionDateControl" [error]="[] | tuiFieldError | async" />
     }
   </div>
 
@@ -156,16 +125,8 @@
         ></textarea>
       </tui-textfield>
 
-      @if (commentControl.touched && commentControl.hasError('required')) {
-        <div class="error">
-          Добавьте комментарий, раз включили это поле.
-        </div>
-      }
-
-      @if (commentControl.touched && commentControl.hasError('maxlength')) {
-        <div class="error">
-          Комментарий слишком длинный: максимум 100 символов.
-        </div>
+      @if (commentControl.touched) {
+        <tui-error [formControl]="commentControl" [error]="[] | tuiFieldError | async" />
       }
     </div>
   }
