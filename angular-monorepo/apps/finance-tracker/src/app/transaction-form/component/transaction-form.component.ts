@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  AbstractControl,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
@@ -34,26 +31,13 @@ import { startWith } from 'rxjs';
 import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import { TuiDay } from '@taiga-ui/cdk';
 import { CommentValidatorsDirective } from '../directives/comment-validators.directive';
-
-type TransactionType = 'income' | 'expense';
-
-function notFutureDateValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value as TuiDay | null;
-
-    if (!value) {
-      return null;
-    }
-
-    const today = TuiDay.currentLocal();
-
-    if (value.daySame(today) || value.dayBefore(today)) {
-      return null;
-    }
-
-    return { futureDate: true };
-  };
-}
+import { TransactionType } from '../types/transaction-form.types';
+import {
+  EXPENSE_CATEGORIES,
+  INCOME_CATEGORIES,
+} from '../constants/transaction-categories';
+import { notFutureDateValidator } from '../validators/not-future-date.validator';
+import { TRANSACTION_VALIDATION_ERRORS } from '../constants/transaction-validation-errors';
 
 @Component({
   selector: 'app-transaction-form',
@@ -80,35 +64,14 @@ function notFutureDateValidator(): ValidatorFn {
     TuiFieldErrorPipe,
     AsyncPipe,
   ],
-  providers: [
-    tuiValidationErrorsProvider({
-      required: 'Заполните это поле',
-      min: 'Введите неотрицательное число',
-      max: 'Сумма не должна превышать 10 000 000 ₽',
-      maxlength: 'Комментарий не должен быть длиннее 100 символов',
-      futureDate: 'Нельзя выбрать дату из будущего',
-    }),
-  ],
+  providers: [tuiValidationErrorsProvider(TRANSACTION_VALIDATION_ERRORS)],
   templateUrl: './transaction-form.component.html',
   styleUrl: './transaction-form.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionFormComponent {
-  readonly incomeCategories: string[] = [
-    'Зарплата',
-    'Премия',
-    'Фриланс',
-    'Подарок',
-    'Кэшбэк',
-  ];
-
-  readonly expenseCategories: string[] = [
-    'Продукты',
-    'Транспорт',
-    'Кафе',
-    'Развлечения',
-    'Жильё',
-  ];
+  readonly incomeCategories = INCOME_CATEGORIES;
+  readonly expenseCategories = EXPENSE_CATEGORIES;
 
   private readonly alerts = inject(TuiAlertService);
 

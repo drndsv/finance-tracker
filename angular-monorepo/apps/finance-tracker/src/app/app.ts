@@ -1,7 +1,7 @@
 import { TuiRoot } from "@taiga-ui/core";
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TransactionFormComponent } from './transaction-form/transaction-form.component';
+import { TransactionFormComponent } from './transaction-form/component/transaction-form.component';
 
 @Component({
   imports: [
