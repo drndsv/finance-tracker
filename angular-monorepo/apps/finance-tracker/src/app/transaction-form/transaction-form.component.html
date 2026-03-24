@@ -28,7 +28,7 @@
 
     @if (typeControl.touched && typeControl.hasError('required')) {
       <div class="error">
-        Выберите тип транзакции: доход или расход.
+        Выберите тип транзакции: доход или расход
       </div>
     }
   </div>
@@ -53,7 +53,45 @@
 
     @if (categoryControl.touched && categoryControl.hasError('required')) {
       <div class="error">
-        Укажите категорию транзакции.
+        Укажите категорию транзакции
+      </div>
+    }
+  </div>
+
+  <div class="field">
+    <label class="label" for="amount">Сумма транзакции</label>
+
+    <tui-textfield>
+      <input
+        id="amount"
+        tuiInputNumber
+        formControlName="amount"
+        placeholder="Введите сумму"
+        [postfix]="' ' + ('RUB' | tuiCurrency)"
+      />
+    </tui-textfield>
+
+    @if (amountControl.value !== null && !amountControl.hasError('required')) {
+      <div class="hint">
+        Сумма: {{ amountControl.value | currency:'RUB':'symbol':'1.2-2':'ru-RU' }}
+      </div>
+    }
+
+    @if (amountControl.touched && amountControl.hasError('required')) {
+      <div class="error">
+        Укажите сумму транзакции
+      </div>
+    }
+
+    @if (amountControl.touched && amountControl.hasError('min')) {
+      <div class="error">
+        Сумма не может быть отрицательной
+      </div>
+    }
+
+    @if (amountControl.touched && amountControl.hasError('max')) {
+      <div class="error">
+        Сумма слишком большая: максимум 10 000 000
       </div>
     }
   </div>

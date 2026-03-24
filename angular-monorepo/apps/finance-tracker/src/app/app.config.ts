@@ -1,3 +1,4 @@
+import '@angular/common/locales/global/ru';
 import { provideEventPlugins } from "@taiga-ui/event-plugins";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import {

@@ -6,15 +6,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { startWith } from 'rxjs';
+import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
 import { TuiButton, TuiGroup, TuiTextfield } from '@taiga-ui/core';
 import {
   TuiBlock,
   TuiChevron,
-  TuiDataListWrapper,
+  TuiDataListWrapper, TuiInputNumber,
   TuiRadio,
   TuiSelect,
 } from '@taiga-ui/kit';
+import { startWith } from 'rxjs';
+import { CurrencyPipe } from '@angular/common';
 
 type TransactionType = 'income' | 'expense';
 
@@ -31,6 +33,9 @@ type TransactionType = 'income' | 'expense';
     TuiDataListWrapper,
     TuiGroup,
     TuiChevron,
+    TuiInputNumber,
+    TuiCurrencyPipe,
+    CurrencyPipe,
   ],
   templateUrl: './transaction-form.component.html',
   styleUrl: './transaction-form.component.less',
@@ -59,6 +64,13 @@ export class TransactionFormComponent {
     }),
     category: new FormControl<string | null>(null, {
       validators: [Validators.required],
+    }),
+    amount: new FormControl<number | null>(null, {
+      validators: [
+        Validators.required,
+        Validators.min(0),
+        Validators.max(10_000_000),
+      ],
     }),
   });
 
@@ -96,6 +108,10 @@ export class TransactionFormComponent {
     return this.form.controls.category;
   }
 
+  get amountControl(): FormControl<number | null> {
+    return this.form.controls.amount;
+  }
+
   submit(): void {
     this.form.markAllAsTouched();
 
@@ -103,6 +119,6 @@ export class TransactionFormComponent {
       return;
     }
 
-    console.log('Шаг 2 готов:', this.form.getRawValue());
+    console.log('Шаг 3 готов:', this.form.getRawValue());
   }
 }
