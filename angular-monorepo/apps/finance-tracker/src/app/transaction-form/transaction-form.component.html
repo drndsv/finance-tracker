@@ -33,6 +33,31 @@
     }
   </div>
 
+  <div class="field">
+    <label class="label" for="category">Категория транзакции</label>
+
+    <tui-textfield tuiChevron>
+      <input
+        id="category"
+        tuiSelect
+        formControlName="category"
+        placeholder="Выберите категорию"
+      />
+
+      <tui-data-list-wrapper
+        *tuiTextfieldDropdown
+        new
+        [items]="categories()"
+      />
+    </tui-textfield>
+
+    @if (categoryControl.touched && categoryControl.hasError('required')) {
+      <div class="error">
+        Укажите категорию транзакции.
+      </div>
+    }
+  </div>
+
   <button tuiButton type="submit" appearance="primary">
     Сохранить
   </button>
