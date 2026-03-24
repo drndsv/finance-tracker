@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
+  AbstractControl,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
@@ -11,14 +14,33 @@ import { TuiButton, TuiGroup, TuiTextfield } from '@taiga-ui/core';
 import {
   TuiBlock,
   TuiChevron,
-  TuiDataListWrapper, TuiInputNumber,
+  TuiDataListWrapper, TuiInputDate, TuiInputNumber,
   TuiRadio,
   TuiSelect,
 } from '@taiga-ui/kit';
 import { startWith } from 'rxjs';
 import { CurrencyPipe } from '@angular/common';
+import { TuiDay } from '@taiga-ui/cdk';
 
 type TransactionType = 'income' | 'expense';
+
+function notFutureDateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value as TuiDay | null;
+
+    if (!value) {
+      return null;
+    }
+
+    const today = TuiDay.currentLocal();
+
+    if (value.daySame(today) || value.dayBefore(today)) {
+      return null;
+    }
+
+    return { futureDate: true };
+  };
+}
 
 @Component({
   selector: 'app-transaction-form',
@@ -36,6 +58,7 @@ type TransactionType = 'income' | 'expense';
     TuiInputNumber,
     TuiCurrencyPipe,
     CurrencyPipe,
+    TuiInputDate,
   ],
   templateUrl: './transaction-form.component.html',
   styleUrl: './transaction-form.component.less',
@@ -58,6 +81,8 @@ export class TransactionFormComponent {
     'Жильё',
   ];
 
+  readonly maxDate = TuiDay.currentLocal();
+
   readonly form = new FormGroup({
     type: new FormControl<TransactionType | null>(null, {
       validators: [Validators.required],
@@ -71,6 +96,9 @@ export class TransactionFormComponent {
         Validators.min(0),
         Validators.max(10_000_000),
       ],
+    }),
+    transactionDate: new FormControl<TuiDay | null>(null, {
+      validators: [Validators.required, notFutureDateValidator()],
     }),
   });
 
@@ -112,6 +140,10 @@ export class TransactionFormComponent {
     return this.form.controls.amount;
   }
 
+  get transactionDateControl(): FormControl<TuiDay | null> {
+    return this.form.controls.transactionDate;
+  }
+
   submit(): void {
     this.form.markAllAsTouched();
 
@@ -119,6 +151,6 @@ export class TransactionFormComponent {
       return;
     }
 
-    console.log('Шаг 3 готов:', this.form.getRawValue());
+    console.log('Шаг 4 готов:', this.form.getRawValue());
   }
 }

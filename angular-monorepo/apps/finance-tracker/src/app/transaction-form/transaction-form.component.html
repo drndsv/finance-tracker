@@ -96,6 +96,40 @@
     }
   </div>
 
+  <div class="field">
+    <label class="label" for="transactionDate">Дата транзакции</label>
+
+    <tui-textfield>
+      <input
+        id="transactionDate"
+        tuiInputDate
+        type="date"
+        formControlName="transactionDate"
+        [max]="maxDate"
+        placeholder="Выберите дату"
+      />
+      <tui-calendar *tuiTextfieldDropdown />
+    </tui-textfield>
+
+    @if (
+      transactionDateControl.touched &&
+      transactionDateControl.hasError('required')
+      ) {
+      <div class="error">
+        Укажите дату транзакции
+      </div>
+    }
+
+    @if (
+      transactionDateControl.touched &&
+      transactionDateControl.hasError('futureDate')
+      ) {
+      <div class="error">
+        Нельзя выбрать дату из будущего
+      </div>
+    }
+  </div>
+
   <button tuiButton type="submit" appearance="primary">
     Сохранить
   </button>
