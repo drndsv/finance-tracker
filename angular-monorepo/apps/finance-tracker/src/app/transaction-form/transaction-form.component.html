@@ -130,6 +130,46 @@
     }
   </div>
 
+  <div class="field">
+    <label class="checkbox-row">
+      <input
+        tuiCheckbox
+        type="checkbox"
+        formControlName="addComment"
+      />
+      Добавить комментарий
+    </label>
+  </div>
+
+  @if (addCommentValue()) {
+    <div class="field">
+      <tui-textfield>
+        <label tuiLabel for="comment">Комментарий к транзакции</label>
+
+        <textarea
+          id="comment"
+          tuiTextarea
+          formControlName="comment"
+          [appCommentValidators]="addCommentValue()"
+          [limit]="100"
+          placeholder="Напишите комментарий"
+        ></textarea>
+      </tui-textfield>
+
+      @if (commentControl.touched && commentControl.hasError('required')) {
+        <div class="error">
+          Добавьте комментарий, раз включили это поле.
+        </div>
+      }
+
+      @if (commentControl.touched && commentControl.hasError('maxlength')) {
+        <div class="error">
+          Комментарий слишком длинный: максимум 100 символов.
+        </div>
+      }
+    </div>
+  }
+
   <button tuiButton type="submit" appearance="primary">
     Сохранить
   </button>

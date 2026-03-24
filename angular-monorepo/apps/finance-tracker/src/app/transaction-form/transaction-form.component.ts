@@ -12,15 +12,16 @@ import {
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
 import { TuiButton, TuiGroup, TuiTextfield } from '@taiga-ui/core';
 import {
-  TuiBlock,
+  TuiBlock, TuiCheckbox,
   TuiChevron,
   TuiDataListWrapper, TuiInputDate, TuiInputNumber,
   TuiRadio,
-  TuiSelect,
+  TuiSelect, TuiTextarea, TuiTextareaLimit,
 } from '@taiga-ui/kit';
 import { startWith } from 'rxjs';
 import { CurrencyPipe } from '@angular/common';
 import { TuiDay } from '@taiga-ui/cdk';
+import { CommentValidatorsDirective } from '../directives/comment-validators.directive';
 
 type TransactionType = 'income' | 'expense';
 
@@ -59,6 +60,10 @@ function notFutureDateValidator(): ValidatorFn {
     TuiCurrencyPipe,
     CurrencyPipe,
     TuiInputDate,
+    CommentValidatorsDirective,
+    TuiTextarea,
+    TuiTextareaLimit,
+    TuiCheckbox,
   ],
   templateUrl: './transaction-form.component.html',
   styleUrl: './transaction-form.component.less',
@@ -100,6 +105,12 @@ export class TransactionFormComponent {
     transactionDate: new FormControl<TuiDay | null>(null, {
       validators: [Validators.required, notFutureDateValidator()],
     }),
+    addComment: new FormControl<boolean>(false, {
+      nonNullable: true,
+    }),
+    comment: new FormControl<string>('', {
+      nonNullable: true,
+    }),
   });
 
   readonly typeValue = toSignal(
@@ -107,6 +118,13 @@ export class TransactionFormComponent {
       startWith(this.form.controls.type.value),
     ),
     { initialValue: this.form.controls.type.value },
+  );
+
+  readonly addCommentValue = toSignal(
+    this.form.controls.addComment.valueChanges.pipe(
+      startWith(this.form.controls.addComment.value),
+    ),
+    { initialValue: this.form.controls.addComment.value },
   );
 
   readonly categories = computed(() => {
@@ -126,6 +144,13 @@ export class TransactionFormComponent {
       this.form.controls.category.setValue(null);
       this.form.controls.category.markAsUntouched();
     });
+
+    this.form.controls.addComment.valueChanges.subscribe((enabled) => {
+      if (!enabled) {
+        this.form.controls.comment.setValue('');
+        this.form.controls.comment.markAsUntouched();
+      }
+    });
   }
 
   get typeControl(): FormControl<TransactionType | null> {
@@ -144,6 +169,10 @@ export class TransactionFormComponent {
     return this.form.controls.transactionDate;
   }
 
+  get commentControl(): FormControl<string> {
+    return this.form.controls.comment;
+  }
+
   submit(): void {
     this.form.markAllAsTouched();
 
@@ -151,6 +180,6 @@ export class TransactionFormComponent {
       return;
     }
 
-    console.log('Шаг 4 готов:', this.form.getRawValue());
+    console.log('Шаг 5 готов:', this.form.getRawValue());
   }
 }
