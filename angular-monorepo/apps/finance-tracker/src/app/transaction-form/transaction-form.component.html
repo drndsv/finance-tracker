@@ -1,0 +1,39 @@
+<form class="form" [formGroup]="form" (ngSubmit)="submit()">
+  <h2 class="title">Добавление транзакции</h2>
+
+  <div class="field">
+    <div class="label">Вид транзакции</div>
+
+    <div tuiGroup class="group" [collapsed]="true">
+      <label tuiBlock>
+        <input
+          tuiRadio
+          type="radio"
+          formControlName="type"
+          value="income"
+        />
+        Доход
+      </label>
+
+      <label tuiBlock>
+        <input
+          tuiRadio
+          type="radio"
+          formControlName="type"
+          value="expense"
+        />
+        Расход
+      </label>
+    </div>
+
+    @if (typeControl.touched && typeControl.hasError('required')) {
+      <div class="error">
+        Выберите тип транзакции: доход или расход.
+      </div>
+    }
+  </div>
+
+  <button tuiButton type="submit" appearance="primary">
+    Сохранить
+  </button>
+</form>
