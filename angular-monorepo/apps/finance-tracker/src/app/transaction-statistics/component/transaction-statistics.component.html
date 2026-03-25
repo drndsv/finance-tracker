@@ -1,0 +1,41 @@
+<section class="statistics">
+  <h2 class="title">Статистика</h2>
+
+  <div class="statistics-grid">
+    <div class="statistics-card">
+      <h3 class="statistics-card__title">Доходы</h3>
+
+      @if (incomeValues().length === 0) {
+        <div class="empty-state">Нет данных по доходам</div>
+      } @else {
+        <tui-ring-chart
+          class="chart"
+          [value]="incomeValues()"
+          [activeItemIndex]="incomeIndex()"
+          (activeItemIndexChange)="incomeIndex.set($event)"
+        >
+          <span>{{ incomeSum() | tuiAmount:'RUB' | async }}</span>
+          <div>{{ incomeLabel() }}</div>
+        </tui-ring-chart>
+      }
+    </div>
+
+    <div class="statistics-card">
+      <h3 class="statistics-card__title">Расходы</h3>
+
+      @if (expenseValues().length === 0) {
+        <div class="empty-state">Нет данных по расходам</div>
+      } @else {
+        <tui-ring-chart
+          class="chart"
+          [value]="expenseValues()"
+          [activeItemIndex]="expenseIndex()"
+          (activeItemIndexChange)="expenseIndex.set($event)"
+        >
+          <span>{{ expenseSum() | tuiAmount:'RUB' | async }}</span>
+          <div>{{ expenseLabel() }}</div>
+        </tui-ring-chart>
+      }
+    </div>
+  </div>
+</section>

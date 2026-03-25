@@ -12,6 +12,7 @@
     "@angular/platform-browser": "~21.2.0",
     "@angular/platform-browser-dynamic": "~21.2.0",
     "@angular/router": "~21.2.0",
+    "@taiga-ui/addon-charts": "^4.76.0",
     "@taiga-ui/addon-commerce": "^4.76.0",
     "@taiga-ui/cdk": "^4.76.0",
     "@taiga-ui/core": "^4.76.0",
