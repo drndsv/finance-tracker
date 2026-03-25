@@ -7,10 +7,11 @@ import {
 import { TransactionsStorageService } from '../../transaction-form/services/transactions-storage.service';
 import { DatePipe } from '@angular/common';
 import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
+import { TuiHint } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-transaction-history',
-  imports: [DatePipe, TransactionAmountPipe],
+  imports: [DatePipe, TransactionAmountPipe, TuiHint],
   templateUrl: './transaction-history.component.html',
   styleUrl: './transaction-history.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
