@@ -1,0 +1,29 @@
+<section class="history">
+  <h2 class="title">История транзакций</h2>
+
+  @if (sortedTransactions().length === 0) {
+    <div class="empty-state">
+      Пока нет ни одной транзакции
+    </div>
+  } @else {
+    <div class="history-list">
+      @for (transaction of sortedTransactions(); track transaction.id) {
+        <div class="history-item">
+          <div class="history-item__category">
+            {{ transaction.category }}
+          </div>
+
+          <div class="history-item__meta">
+            <div class="history-item__amount">
+              {{ transaction.amount }}
+            </div>
+
+            <div class="history-item__date">
+              {{ transaction.transactionDate | date:'dd.MM.yyyy' }}
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>
