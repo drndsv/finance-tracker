@@ -38,6 +38,8 @@ import {
 } from '../constants/transaction-categories';
 import { notFutureDateValidator } from '../validators/not-future-date.validator';
 import { TRANSACTION_VALIDATION_ERRORS } from '../constants/transaction-validation-errors';
+import { TransactionsStorageService } from '../services/transactions-storage.service';
+import { Transaction } from '../types/transaction.types';
 
 @Component({
   selector: 'app-transaction-form',
@@ -74,6 +76,7 @@ export class TransactionFormComponent {
   readonly expenseCategories = EXPENSE_CATEGORIES;
 
   private readonly alerts = inject(TuiAlertService);
+  private readonly transactionsStorage = inject(TransactionsStorageService);
 
   readonly maxDate = TuiDay.currentLocal();
 
@@ -162,6 +165,22 @@ export class TransactionFormComponent {
     return this.form.controls.comment;
   }
 
+  private createTransaction(): Transaction {
+    const formValue = this.form.getRawValue();
+
+    return {
+      id: crypto.randomUUID(),
+      type: formValue.type as Transaction['type'],
+      category: formValue.category as string,
+      amount: formValue.amount as number,
+      transactionDate: formValue.transactionDate
+        ? formValue.transactionDate.toString()
+        : '',
+      comment: formValue.comment.trim(),
+      createdAt: new Date().toISOString(),
+    };
+  }
+
   submit(): void {
     this.form.markAllAsTouched();
 
@@ -169,12 +188,25 @@ export class TransactionFormComponent {
       return;
     }
 
+    const transaction = this.createTransaction();
+
+    this.transactionsStorage.saveTransaction(transaction);
+
     this.alerts
       .open('Транзакция успешно сохранена', {
         appearance: 'success',
         label: 'Успех',
       })
       .subscribe();
+
+    this.form.reset({
+      type: null,
+      category: null,
+      amount: null,
+      transactionDate: null,
+      addComment: false,
+      comment: '',
+    });
 
     console.log('Форма валидна:', this.form.getRawValue());
   }
