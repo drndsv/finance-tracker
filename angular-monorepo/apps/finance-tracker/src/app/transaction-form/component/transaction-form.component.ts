@@ -165,6 +165,18 @@ export class TransactionFormComponent {
     return this.form.controls.comment;
   }
 
+  private formatTransactionDate(date: TuiDay | null): string {
+    if (!date) {
+      return '';
+    }
+
+    const year = date.year;
+    const month = String(date.month + 1).padStart(2, '0');
+    const day = String(date.day).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   private createTransaction(): Transaction {
     const formValue = this.form.getRawValue();
 
@@ -173,9 +185,7 @@ export class TransactionFormComponent {
       type: formValue.type as Transaction['type'],
       category: formValue.category as string,
       amount: formValue.amount as number,
-      transactionDate: formValue.transactionDate
-        ? formValue.transactionDate.toString()
-        : '',
+      transactionDate: this.formatTransactionDate(formValue.transactionDate),
       comment: formValue.comment.trim(),
       createdAt: new Date().toISOString(),
     };

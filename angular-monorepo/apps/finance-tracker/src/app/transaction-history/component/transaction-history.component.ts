@@ -3,15 +3,14 @@ import {
   Component,
   computed,
   inject,
-  signal,
 } from '@angular/core';
 import { TransactionsStorageService } from '../../transaction-form/services/transactions-storage.service';
-import { Transaction } from '../../transaction-form/types/transaction.types';
 import { DatePipe } from '@angular/common';
+import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
 
 @Component({
   selector: 'app-transaction-history',
-  imports: [DatePipe],
+  imports: [DatePipe, TransactionAmountPipe],
   templateUrl: './transaction-history.component.html',
   styleUrl: './transaction-history.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,18 +18,11 @@ import { DatePipe } from '@angular/common';
 export class TransactionHistoryComponent {
   private readonly transactionsStorage = inject(TransactionsStorageService);
 
-  readonly transactions = signal<Transaction[]>(
-    this.transactionsStorage.getTransactions(),
-  );
-
   readonly sortedTransactions = computed(() => {
-    return [...this.transactions()].sort(
-      (firstTransaction, secondTransaction) => {
-        return (
-          new Date(secondTransaction.transactionDate).getTime() -
-          new Date(firstTransaction.transactionDate).getTime()
-        );
-      },
+    return [...this.transactionsStorage.transactions()].sort(
+      (firstTransaction, secondTransaction) =>
+        new Date(secondTransaction.transactionDate).getTime() -
+        new Date(firstTransaction.transactionDate).getTime(),
     );
   });
 }

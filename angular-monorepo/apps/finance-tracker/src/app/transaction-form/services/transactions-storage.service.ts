@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Transaction } from '../types/transaction.types';
 
 @Injectable({
@@ -7,7 +7,32 @@ import { Transaction } from '../types/transaction.types';
 export class TransactionsStorageService {
   private readonly storageKey = 'finance-tracker-transactions';
 
+  readonly transactions = signal<Transaction[]>(
+    this.readTransactionsFromStorage(),
+  );
+
   getTransactions(): Transaction[] {
+    return this.transactions();
+  }
+
+  saveTransaction(transaction: Transaction): void {
+    const updatedTransactions = [transaction, ...this.transactions()];
+
+    this.transactions.set(updatedTransactions);
+    this.saveTransactionsToStorage(updatedTransactions);
+  }
+
+  setTransactions(transactions: Transaction[]): void {
+    this.transactions.set(transactions);
+    this.saveTransactionsToStorage(transactions);
+  }
+
+  clearTransactions(): void {
+    this.transactions.set([]);
+    localStorage.removeItem(this.storageKey);
+  }
+
+  private readTransactionsFromStorage(): Transaction[] {
     const rawTransactions = localStorage.getItem(this.storageKey);
 
     if (!rawTransactions) {
@@ -21,19 +46,7 @@ export class TransactionsStorageService {
     }
   }
 
-  saveTransaction(transaction: Transaction): void {
-    const transactions = this.getTransactions();
-
-    transactions.unshift(transaction);
-
+  private saveTransactionsToStorage(transactions: Transaction[]): void {
     localStorage.setItem(this.storageKey, JSON.stringify(transactions));
-  }
-
-  setTransactions(transactions: Transaction[]): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(transactions));
-  }
-
-  clearTransactions(): void {
-    localStorage.removeItem(this.storageKey);
   }
 }
