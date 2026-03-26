@@ -26,8 +26,23 @@ export class TransactionsStorageService {
 
   updateTransaction(updatedTransaction: Transaction): void {
     const updatedTransactions = this.transactions().map((transaction) =>
-      transaction.id === updatedTransaction.id ? updatedTransaction : transaction,
+      transaction.id === updatedTransaction.id
+        ? updatedTransaction
+        : transaction,
     );
+
+    this.transactions.set(updatedTransactions);
+    this.saveTransactionsToStorage(updatedTransactions);
+  }
+
+  deleteTransaction(transactionId: string): void {
+    const updatedTransactions = this.transactions().filter(
+      (transaction) => transaction.id !== transactionId,
+    );
+
+    if (this.editingTransaction()?.id === transactionId) {
+      this.editingTransaction.set(null);
+    }
 
     this.transactions.set(updatedTransactions);
     this.saveTransactionsToStorage(updatedTransactions);

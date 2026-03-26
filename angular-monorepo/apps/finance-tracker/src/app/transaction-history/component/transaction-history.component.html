@@ -22,15 +22,28 @@
               {{ transaction.transactionDate | date:'dd.MM.yyyy' }}
             </div>
 
-            <button
-              tuiButton
-              type="button"
-              size="s"
-              appearance="secondary"
-              (click)="editTransaction(transaction)"
-            >
-              Редактировать
-            </button>
+            <div class="history-item__actions">
+              <button
+                tuiButton
+                type="button"
+                size="s"
+                appearance="secondary"
+                (click)="editTransaction(transaction)"
+              >
+                Редактировать
+              </button>
+
+              <button
+                tuiButton
+                type="button"
+                size="s"
+                appearance="secondary"
+                (click)="deleteTransaction(transaction.id)"
+              >
+                Удалить
+              </button>
+            </div>
+
           </div>
         </div>
       }

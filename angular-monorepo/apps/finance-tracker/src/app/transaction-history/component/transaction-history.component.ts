@@ -49,4 +49,8 @@ export class TransactionHistoryComponent {
   editTransaction(transaction: Transaction): void {
     this.transactionsStorage.startEditing(transaction);
   }
+
+  deleteTransaction(transactionId: string): void {
+    this.transactionsStorage.deleteTransaction(transactionId);
+  }
 }
