@@ -4,12 +4,13 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { TransactionsStorageService } from '../../transaction-form/services/transactions-storage.service';
+import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import { DatePipe } from '@angular/common';
 import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
 import { TuiButton, TuiHint } from '@taiga-ui/core';
 import { Transaction } from '../../transaction-form/types/transaction.types';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { AlertService } from '../../shared/services/alert.service';
 
 @Component({
   selector: 'app-transaction-history',
@@ -37,6 +38,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 })
 export class TransactionHistoryComponent {
   private readonly transactionsStorage = inject(TransactionsStorageService);
+  private readonly alerts = inject(AlertService);
 
   readonly sortedTransactions = computed(() => {
     return [...this.transactionsStorage.transactions()].sort(
@@ -48,9 +50,11 @@ export class TransactionHistoryComponent {
 
   editTransaction(transaction: Transaction): void {
     this.transactionsStorage.startEditing(transaction);
+    this.alerts.info('Вы редактируете транзакцию');
   }
 
   deleteTransaction(transactionId: string): void {
     this.transactionsStorage.deleteTransaction(transactionId);
+    this.alerts.warning('Транзакция удалена');
   }
 }

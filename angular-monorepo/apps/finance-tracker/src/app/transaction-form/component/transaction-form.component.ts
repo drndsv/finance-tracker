@@ -9,13 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
-import {
-  TuiAlertService,
-  TuiButton,
-  TuiError,
-  TuiGroup,
-  TuiTextfield,
-} from '@taiga-ui/core';
+import { TuiButton, TuiError, TuiGroup, TuiTextfield } from '@taiga-ui/core';
 import {
   TuiBlock,
   TuiCheckbox,
@@ -39,11 +33,12 @@ import {
   INCOME_CATEGORIES,
 } from '../constants/transaction-categories';
 import { TRANSACTION_VALIDATION_ERRORS } from '../constants/transaction-validation-errors';
-import { TransactionsStorageService } from '../services/transactions-storage.service';
+import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import { Transaction } from '../types/transaction.types';
 import { createTransactionForm } from '../forms/transaction-form.factory';
 import { buildTransactionFromForm } from '../mappers/transaction-form.mapper';
 import { parseTransactionDate } from '../utils/transaction-date.util';
+import { AlertService } from '../../shared/services/alert.service';
 
 @Component({
   selector: 'app-transaction-form',
@@ -83,7 +78,7 @@ export class TransactionFormComponent {
   readonly expenseCategories = EXPENSE_CATEGORIES;
   readonly maxDate = TuiDay.currentLocal();
 
-  private readonly alerts = inject(TuiAlertService);
+  private readonly alerts = inject(AlertService);
   private readonly transactionsStorage = inject(TransactionsStorageService);
 
   private lastPatchedTransactionId: string | null = null;
@@ -155,10 +150,10 @@ export class TransactionFormComponent {
 
     if (this.isEditMode()) {
       this.transactionsStorage.updateTransaction(transaction);
-      this.showSuccessAlert('Транзакция успешно обновлена');
+      this.alerts.success('Транзакция успешно обновлена');
     } else {
       this.transactionsStorage.saveTransaction(transaction);
-      this.showSuccessAlert('Транзакция успешно сохранена');
+      this.alerts.success('Транзакция успешно сохранена');
     }
 
     this.resetFormState();
@@ -240,14 +235,5 @@ export class TransactionFormComponent {
       behavior: 'smooth',
       block: 'start',
     });
-  }
-
-  private showSuccessAlert(message: string): void {
-    this.alerts
-      .open(message, {
-        appearance: 'success',
-        label: 'Успех',
-      })
-      .subscribe();
   }
 }

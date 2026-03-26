@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Transaction } from '../types/transaction.types';
+import { Transaction } from '../../transaction-form/types/transaction.types';
 
 @Injectable({
   providedIn: 'root',
@@ -12,10 +12,6 @@ export class TransactionsStorageService {
   );
 
   readonly editingTransaction = signal<Transaction | null>(null);
-
-  getTransactions(): Transaction[] {
-    return this.transactions();
-  }
 
   saveTransaction(transaction: Transaction): void {
     const updatedTransactions = [transaction, ...this.transactions()];
@@ -54,17 +50,6 @@ export class TransactionsStorageService {
 
   cancelEditing(): void {
     this.editingTransaction.set(null);
-  }
-
-  setTransactions(transactions: Transaction[]): void {
-    this.transactions.set(transactions);
-    this.saveTransactionsToStorage(transactions);
-  }
-
-  clearTransactions(): void {
-    this.transactions.set([]);
-    this.editingTransaction.set(null);
-    localStorage.removeItem(this.storageKey);
   }
 
   private readTransactionsFromStorage(): Transaction[] {

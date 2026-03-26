@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { TransactionsStorageService } from '../../transaction-form/services/transactions-storage.service';
+import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import { TuiRingChart } from '@taiga-ui/addon-charts';
 import { tuiSum } from '@taiga-ui/cdk';
 import { AsyncPipe } from '@angular/common';
