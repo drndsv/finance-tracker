@@ -111,8 +111,7 @@
     </label>
   </div>
 
-  @if (addCommentValue) {
-    <div class="field">
+    <div class="field" [class.field_hidden]="!addCommentValue">
       <tui-textfield>
         <label tuiLabel for="comment">Комментарий к транзакции</label>
 
@@ -126,11 +125,10 @@
         ></textarea>
       </tui-textfield>
 
-      @if (commentControl.touched) {
+      @if (addCommentValue && commentControl.touched) {
         <tui-error [formControl]="commentControl" [error]="[] | tuiFieldError | async" />
       }
     </div>
-  }
 
   <div class="actions">
     <button tuiButton type="submit" appearance="primary">
