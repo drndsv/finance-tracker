@@ -21,6 +21,16 @@
             <div class="history-item__date">
               {{ transaction.transactionDate | date:'dd.MM.yyyy' }}
             </div>
+
+            <button
+              tuiButton
+              type="button"
+              size="s"
+              appearance="secondary"
+              (click)="editTransaction(transaction)"
+            >
+              Редактировать
+            </button>
           </div>
         </div>
       }

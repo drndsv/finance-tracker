@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl,
@@ -80,6 +86,10 @@ export class TransactionFormComponent {
 
   readonly maxDate = TuiDay.currentLocal();
 
+  readonly editingTransaction = this.transactionsStorage.editingTransaction;
+
+  readonly isEditMode = computed(() => this.editingTransaction() !== null);
+
   readonly form = new FormGroup({
     type: new FormControl<TransactionType | null>(null, {
       validators: [Validators.required],
@@ -143,6 +153,14 @@ export class TransactionFormComponent {
         this.form.controls.comment.markAsUntouched();
       }
     });
+
+    effect(() => {
+      const transaction = this.editingTransaction();
+
+      if (transaction) {
+        this.fillFormForEditing(transaction);
+      }
+    });
   }
 
   get typeControl(): FormControl<TransactionType | null> {
@@ -177,37 +195,54 @@ export class TransactionFormComponent {
     return `${year}-${month}-${day}`;
   }
 
-  private createTransaction(): Transaction {
+  private buildTransaction(): Transaction {
     const formValue = this.form.getRawValue();
+    const editingTransaction = this.editingTransaction();
 
     return {
-      id: crypto.randomUUID(),
+      id: editingTransaction?.id ?? crypto.randomUUID(),
       type: formValue.type as Transaction['type'],
       category: formValue.category as string,
       amount: formValue.amount as number,
       transactionDate: this.formatTransactionDate(formValue.transactionDate),
       comment: formValue.comment.trim(),
-      createdAt: new Date().toISOString(),
+      createdAt: editingTransaction?.createdAt ?? new Date().toISOString(),
     };
   }
 
-  submit(): void {
-    this.form.markAllAsTouched();
-
-    if (this.form.invalid) {
-      return;
+  private parseTransactionDate(date: string): TuiDay | null {
+    if (!date) {
+      return null;
     }
 
-    const transaction = this.createTransaction();
+    const [year, month, day] = date.split('-').map(Number);
 
-    this.transactionsStorage.saveTransaction(transaction);
+    if (!year || !month || !day) {
+      return null;
+    }
 
-    this.alerts
-      .open('Транзакция успешно сохранена', {
-        appearance: 'success',
-        label: 'Успех',
-      })
-      .subscribe();
+    return new TuiDay(year, month - 1, day);
+  }
+
+  private fillFormForEditing(transaction: Transaction): void {
+    this.form.patchValue({
+      type: transaction.type,
+      category: transaction.category,
+      amount: transaction.amount,
+      transactionDate: this.parseTransactionDate(transaction.transactionDate),
+      addComment: Boolean(transaction.comment),
+      comment: transaction.comment,
+    });
+
+    this.form.markAsUntouched();
+  }
+
+  cancelEdit(): void {
+    this.resetFormState();
+  }
+
+  private resetFormState(): void {
+    this.transactionsStorage.cancelEditing();
 
     this.form.reset({
       type: null,
@@ -218,6 +253,38 @@ export class TransactionFormComponent {
       comment: '',
     });
 
-    console.log('Форма валидна:', this.form.getRawValue());
+    this.form.markAsUntouched();
+  }
+
+  submit(): void {
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid) {
+      return;
+    }
+
+    const transaction = this.buildTransaction();
+
+    if (this.isEditMode()) {
+      this.transactionsStorage.updateTransaction(transaction);
+
+      this.alerts
+        .open('Транзакция успешно обновлена', {
+          appearance: 'success',
+          label: 'Успех',
+        })
+        .subscribe();
+    } else {
+      this.transactionsStorage.saveTransaction(transaction);
+
+      this.alerts
+        .open('Транзакция успешно сохранена', {
+          appearance: 'success',
+          label: 'Успех',
+        })
+        .subscribe();
+    }
+
+    this.resetFormState();
   }
 }

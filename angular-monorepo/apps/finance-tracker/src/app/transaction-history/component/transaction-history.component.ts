@@ -7,11 +7,12 @@ import {
 import { TransactionsStorageService } from '../../transaction-form/services/transactions-storage.service';
 import { DatePipe } from '@angular/common';
 import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
-import { TuiHint } from '@taiga-ui/core';
+import { TuiButton, TuiHint } from '@taiga-ui/core';
+import { Transaction } from '../../transaction-form/types/transaction.types';
 
 @Component({
   selector: 'app-transaction-history',
-  imports: [DatePipe, TransactionAmountPipe, TuiHint],
+  imports: [DatePipe, TransactionAmountPipe, TuiHint, TuiButton],
   templateUrl: './transaction-history.component.html',
   styleUrl: './transaction-history.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,4 +27,8 @@ export class TransactionHistoryComponent {
         new Date(firstTransaction.transactionDate).getTime(),
     );
   });
+
+  editTransaction(transaction: Transaction): void {
+    this.transactionsStorage.startEditing(transaction);
+  }
 }

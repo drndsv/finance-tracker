@@ -1,5 +1,7 @@
 <form class="form" [formGroup]="form" (ngSubmit)="submit()">
-  <h2 class="title">Добавление транзакции</h2>
+  <h2 class="title">
+    {{ isEditMode() ? 'Редактирование транзакции' : 'Добавление транзакции' }}
+  </h2>
 
   <div class="field">
     <div class="label">Вид транзакции</div>
@@ -131,7 +133,20 @@
     </div>
   }
 
-  <button tuiButton type="submit" appearance="primary">
-    Сохранить
-  </button>
+  <div class="actions">
+    <button tuiButton type="submit" appearance="primary">
+      {{ isEditMode() ? 'Сохранить изменения' : 'Сохранить' }}
+    </button>
+
+    @if (isEditMode()) {
+      <button
+        tuiButton
+        type="button"
+        appearance="secondary"
+        (click)="cancelEdit()"
+      >
+        Отмена
+      </button>
+    }
+  </div>
 </form>
