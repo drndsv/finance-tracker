@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,11 +6,12 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import { TuiRingChart } from '@taiga-ui/addon-charts';
-import { tuiSum } from '@taiga-ui/cdk';
-import { AsyncPipe } from '@angular/common';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
+import { tuiSum } from '@taiga-ui/cdk';
+
+import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
+import { TransactionType } from '../../transaction-form/types/transaction-form.types';
 import {
   buildChartItems,
   getActiveChartLabel,
@@ -17,7 +19,6 @@ import {
   mapChartLabels,
   mapChartValues,
 } from '../utils/transaction-statistics.util';
-import { TransactionType } from '../../transaction-form/types/transaction-form.types';
 
 @Component({
   selector: 'app-transaction-statistics',

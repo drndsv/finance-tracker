@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+
 import { TransactionType } from '../../transaction-form/types/transaction-form.types';
 
 @Pipe({

@@ -1,5 +1,6 @@
-import { TransactionType } from '../types/transaction-form.types';
 import { TuiDay } from '@taiga-ui/cdk';
+
+import { TransactionType } from '../types/transaction-form.types';
 import { Transaction } from '../types/transaction.types';
 import { formatTransactionDate } from '../utils/transaction-date.util';
 

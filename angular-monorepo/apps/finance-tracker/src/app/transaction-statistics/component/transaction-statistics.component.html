@@ -14,7 +14,7 @@
           [activeItemIndex]="incomeIndex()"
           (activeItemIndexChange)="incomeIndex.set($event)"
         >
-          <span>{{ incomeSum() | tuiAmount:'RUB' | async }}</span>
+          <span>{{ incomeSum() | tuiAmount: 'RUB' | async }}</span>
           <div>{{ incomeLabel() }}</div>
         </tui-ring-chart>
       }
@@ -32,7 +32,7 @@
           [activeItemIndex]="expenseIndex()"
           (activeItemIndexChange)="expenseIndex.set($event)"
         >
-          <span>{{ expenseSum() | tuiAmount:'RUB' | async }}</span>
+          <span>{{ expenseSum() | tuiAmount: 'RUB' | async }}</span>
           <div>{{ expenseLabel() }}</div>
         </tui-ring-chart>
       }

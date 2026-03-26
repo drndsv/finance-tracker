@@ -1,9 +1,8 @@
 import {
   Directive,
+  inject,
   Input,
   OnChanges,
-  Optional,
-  Self,
   SimpleChanges,
 } from '@angular/core';
 import { NgControl, Validators } from '@angular/forms';
@@ -14,9 +13,10 @@ import { NgControl, Validators } from '@angular/forms';
 export class CommentValidatorsDirective implements OnChanges {
   @Input({ required: true }) appCommentValidators = false;
 
-  constructor(
-    @Self() @Optional() private readonly ngControl: NgControl | null,
-  ) {}
+  private readonly ngControl = inject(NgControl, {
+    self: true,
+    optional: true,
+  });
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!('appCommentValidators' in changes) || !this.ngControl?.control) {

@@ -2,7 +2,8 @@
   #transactionFormElement
   class="form"
   [formGroup]="form"
-  (ngSubmit)="submit()">
+  (ngSubmit)="submit()"
+>
   <h2 class="title">
     {{ isEditMode() ? 'Редактирование транзакции' : 'Добавление транзакции' }}
   </h2>
@@ -12,28 +13,21 @@
 
     <div tuiGroup class="group" [collapsed]="true">
       <label tuiBlock>
-        <input
-          tuiRadio
-          type="radio"
-          formControlName="type"
-          value="income"
-        />
+        <input tuiRadio type="radio" formControlName="type" value="income" />
         Доход
       </label>
 
       <label tuiBlock>
-        <input
-          tuiRadio
-          type="radio"
-          formControlName="type"
-          value="expense"
-        />
+        <input tuiRadio type="radio" formControlName="type" value="expense" />
         Расход
       </label>
     </div>
 
     @if (typeControl.touched) {
-      <tui-error [formControl]="typeControl" [error]="[] | tuiFieldError | async" />
+      <tui-error
+        [formControl]="typeControl"
+        [error]="[] | tuiFieldError | async"
+      />
     }
   </div>
 
@@ -48,16 +42,14 @@
         placeholder="Выберите категорию"
       />
 
-      <tui-data-list-wrapper
-        *tuiTextfieldDropdown
-        new
-        [items]="categories"
-      />
+      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="categories" />
     </tui-textfield>
 
-
     @if (categoryControl.touched) {
-      <tui-error [formControl]="categoryControl" [error]="[] | tuiFieldError | async" />
+      <tui-error
+        [formControl]="categoryControl"
+        [error]="[] | tuiFieldError | async"
+      />
     }
   </div>
 
@@ -76,12 +68,18 @@
 
     @if (amountControl.value !== null && !amountControl.hasError('required')) {
       <div class="hint">
-        Сумма: {{ amountControl.value | currency:'RUB':'symbol':'1.2-2':'ru-RU' }}
+        Сумма:
+        {{
+          amountControl.value | currency: 'RUB' : 'symbol' : '1.2-2' : 'ru-RU'
+        }}
       </div>
     }
 
     @if (amountControl.touched) {
-      <tui-error [formControl]="amountControl" [error]="[] | tuiFieldError | async" />
+      <tui-error
+        [formControl]="amountControl"
+        [error]="[] | tuiFieldError | async"
+      />
     }
   </div>
 
@@ -100,39 +98,41 @@
     </tui-textfield>
 
     @if (transactionDateControl.touched) {
-      <tui-error [formControl]="transactionDateControl" [error]="[] | tuiFieldError | async" />
+      <tui-error
+        [formControl]="transactionDateControl"
+        [error]="[] | tuiFieldError | async"
+      />
     }
   </div>
 
   <div class="field">
     <label class="checkbox-row">
-      <input
-        tuiCheckbox
-        type="checkbox"
-        formControlName="addComment"
-      />
+      <input tuiCheckbox type="checkbox" formControlName="addComment" />
       Добавить комментарий
     </label>
   </div>
 
-    <div class="field" [class.field_hidden]="!addCommentValue">
-      <tui-textfield>
-        <label tuiLabel for="comment">Комментарий к транзакции</label>
+  <div class="field" [class.field_hidden]="!addCommentValue">
+    <tui-textfield>
+      <label tuiLabel for="comment">Комментарий к транзакции</label>
 
-        <textarea
-          id="comment"
-          tuiTextarea
-          formControlName="comment"
-          [appCommentValidators]="addCommentValue"
-          [limit]="100"
-          placeholder="Напишите комментарий"
-        ></textarea>
-      </tui-textfield>
+      <textarea
+        id="comment"
+        tuiTextarea
+        formControlName="comment"
+        [appCommentValidators]="addCommentValue"
+        [limit]="100"
+        placeholder="Напишите комментарий"
+      ></textarea>
+    </tui-textfield>
 
-      @if (addCommentValue && commentControl.touched) {
-        <tui-error [formControl]="commentControl" [error]="[] | tuiFieldError | async" />
-      }
-    </div>
+    @if (addCommentValue && commentControl.touched) {
+      <tui-error
+        [formControl]="commentControl"
+        [error]="[] | tuiFieldError | async"
+      />
+    }
+  </div>
 
   <div class="actions">
     <button tuiButton type="submit" appearance="primary">

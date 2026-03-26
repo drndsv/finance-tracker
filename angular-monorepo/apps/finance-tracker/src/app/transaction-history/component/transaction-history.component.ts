@@ -1,16 +1,17 @@
+import { animate, style, transition, trigger } from '@angular/animations';
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
 } from '@angular/core';
-import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
-import { DatePipe } from '@angular/common';
-import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
 import { TuiButton, TuiHint } from '@taiga-ui/core';
-import { Transaction } from '../../transaction-form/types/transaction.types';
-import { animate, style, transition, trigger } from '@angular/animations';
+
 import { AlertService } from '../../shared/services/alert.service';
+import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
+import { Transaction } from '../../transaction-form/types/transaction.types';
+import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
 
 @Component({
   selector: 'app-transaction-history',

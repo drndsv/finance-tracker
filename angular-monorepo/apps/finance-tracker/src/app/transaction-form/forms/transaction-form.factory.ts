@@ -1,6 +1,7 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { TransactionType } from '../types/transaction-form.types';
 import { TuiDay } from '@taiga-ui/cdk';
+
+import { TransactionType } from '../types/transaction-form.types';
 import { notFutureDateValidator } from '../validators/not-future-date.validator';
 
 export function createTransactionForm(): FormGroup<{

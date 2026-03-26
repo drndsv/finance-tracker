@@ -1,3 +1,4 @@
+import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
+import { TuiDay } from '@taiga-ui/cdk';
 import { TuiButton, TuiError, TuiGroup, TuiTextfield } from '@taiga-ui/core';
 import {
   TuiBlock,
@@ -24,21 +26,20 @@ import {
   TuiTextareaLimit,
   tuiValidationErrorsProvider,
 } from '@taiga-ui/kit';
-import { AsyncPipe, CurrencyPipe } from '@angular/common';
-import { TuiDay } from '@taiga-ui/cdk';
-import { CommentValidatorsDirective } from '../directives/comment-validators.directive';
-import { TransactionType } from '../types/transaction-form.types';
+
+import { AlertService } from '../../shared/services/alert.service';
+import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import {
   EXPENSE_CATEGORIES,
   INCOME_CATEGORIES,
 } from '../constants/transaction-categories';
 import { TRANSACTION_VALIDATION_ERRORS } from '../constants/transaction-validation-errors';
-import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
-import { Transaction } from '../types/transaction.types';
+import { CommentValidatorsDirective } from '../directives/comment-validators.directive';
 import { createTransactionForm } from '../forms/transaction-form.factory';
 import { buildTransactionFromForm } from '../mappers/transaction-form.mapper';
+import { TransactionType } from '../types/transaction-form.types';
+import { Transaction } from '../types/transaction.types';
 import { parseTransactionDate } from '../utils/transaction-date.util';
-import { AlertService } from '../../shared/services/alert.service';
 
 @Component({
   selector: 'app-transaction-form',
