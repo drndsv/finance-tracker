@@ -117,13 +117,6 @@ export class TransactionFormComponent {
     }),
   });
 
-  readonly typeValue = toSignal(
-    this.form.controls.type.valueChanges.pipe(
-      startWith(this.form.controls.type.value),
-    ),
-    { initialValue: this.form.controls.type.value },
-  );
-
   readonly addCommentValue = toSignal(
     this.form.controls.addComment.valueChanges.pipe(
       startWith(this.form.controls.addComment.value),
@@ -132,11 +125,13 @@ export class TransactionFormComponent {
   );
 
   readonly categories = computed(() => {
-    if (this.typeValue() === 'income') {
+    const transactionType = this.form.controls.type.value;
+
+    if (transactionType === 'income') {
       return this.incomeCategories;
     }
 
-    if (this.typeValue() === 'expense') {
+    if (transactionType === 'expense') {
       return this.expenseCategories;
     }
 
