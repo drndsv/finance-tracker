@@ -7,16 +7,12 @@ import {
   inject,
   ViewChild,
 } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
 import {
   TuiAlertService,
-  TuiButton, TuiError,
+  TuiButton,
+  TuiError,
   TuiGroup,
   TuiTextfield,
 } from '@taiga-ui/core';
@@ -42,10 +38,12 @@ import {
   EXPENSE_CATEGORIES,
   INCOME_CATEGORIES,
 } from '../constants/transaction-categories';
-import { notFutureDateValidator } from '../validators/not-future-date.validator';
 import { TRANSACTION_VALIDATION_ERRORS } from '../constants/transaction-validation-errors';
 import { TransactionsStorageService } from '../services/transactions-storage.service';
 import { Transaction } from '../types/transaction.types';
+import { createTransactionForm } from '../forms/transaction-form.factory';
+import { buildTransactionFromForm } from '../mappers/transaction-form.mapper';
+import { parseTransactionDate } from '../utils/transaction-date.util';
 
 @Component({
   selector: 'app-transaction-form',
@@ -83,42 +81,17 @@ export class TransactionFormComponent {
 
   readonly incomeCategories = INCOME_CATEGORIES;
   readonly expenseCategories = EXPENSE_CATEGORIES;
+  readonly maxDate = TuiDay.currentLocal();
 
   private readonly alerts = inject(TuiAlertService);
   private readonly transactionsStorage = inject(TransactionsStorageService);
 
   private lastPatchedTransactionId: string | null = null;
 
-  readonly maxDate = TuiDay.currentLocal();
-
   readonly editingTransaction = this.transactionsStorage.editingTransaction;
-
   readonly isEditMode = computed(() => this.editingTransaction() !== null);
 
-  readonly form = new FormGroup({
-    type: new FormControl<TransactionType | null>(null, {
-      validators: [Validators.required],
-    }),
-    category: new FormControl<string | null>(null, {
-      validators: [Validators.required],
-    }),
-    amount: new FormControl<number | null>(null, {
-      validators: [
-        Validators.required,
-        Validators.min(0),
-        Validators.max(10_000_000),
-      ],
-    }),
-    transactionDate: new FormControl<TuiDay | null>(null, {
-      validators: [Validators.required, notFutureDateValidator()],
-    }),
-    addComment: new FormControl<boolean>(false, {
-      nonNullable: true,
-    }),
-    comment: new FormControl<string>('', {
-      nonNullable: true,
-    }),
-  });
+  readonly form = createTransactionForm();
 
   get addCommentValue(): boolean {
     return this.form.controls.addComment.value;
@@ -139,37 +112,9 @@ export class TransactionFormComponent {
   }
 
   constructor() {
-    this.form.controls.type.valueChanges.subscribe(() => {
-      this.form.controls.category.setValue(null);
-      this.form.controls.category.markAsUntouched();
-    });
-
-    this.form.controls.addComment.valueChanges.subscribe((enabled) => {
-      if (!enabled) {
-        this.form.controls.comment.setValue('');
-        this.form.controls.comment.markAsUntouched();
-      }
-    });
-
-    effect(() => {
-      const transaction = this.editingTransaction();
-
-      if (!transaction) {
-        this.lastPatchedTransactionId = null;
-        return;
-      }
-
-      if (this.lastPatchedTransactionId === transaction.id) {
-        return;
-      }
-
-      this.fillFormForEditing(transaction);
-      this.lastPatchedTransactionId = transaction.id;
-
-      requestAnimationFrame(() => {
-        this.scrollToForm();
-      });
-    });
+    this.initTypeWatcher();
+    this.initCommentWatcher();
+    this.initEditingEffect();
   }
 
   get typeControl(): FormControl<TransactionType | null> {
@@ -192,45 +137,69 @@ export class TransactionFormComponent {
     return this.form.controls.comment;
   }
 
-  private formatTransactionDate(date: TuiDay | null): string {
-    if (!date) {
-      return '';
-    }
-
-    const year = date.year;
-    const month = String(date.month + 1).padStart(2, '0');
-    const day = String(date.day).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
+  cancelEdit(): void {
+    this.resetFormState();
   }
 
-  private buildTransaction(): Transaction {
-    const formValue = this.form.getRawValue();
-    const editingTransaction = this.editingTransaction();
+  submit(): void {
+    this.form.markAllAsTouched();
 
-    return {
-      id: editingTransaction?.id ?? crypto.randomUUID(),
-      type: formValue.type as Transaction['type'],
-      category: formValue.category as string,
-      amount: formValue.amount as number,
-      transactionDate: this.formatTransactionDate(formValue.transactionDate),
-      comment: formValue.comment.trim(),
-      createdAt: editingTransaction?.createdAt ?? new Date().toISOString(),
-    };
+    if (this.form.invalid) {
+      return;
+    }
+
+    const transaction = buildTransactionFromForm(
+      this.form.getRawValue(),
+      this.editingTransaction(),
+    );
+
+    if (this.isEditMode()) {
+      this.transactionsStorage.updateTransaction(transaction);
+      this.showSuccessAlert('Транзакция успешно обновлена');
+    } else {
+      this.transactionsStorage.saveTransaction(transaction);
+      this.showSuccessAlert('Транзакция успешно сохранена');
+    }
+
+    this.resetFormState();
   }
 
-  private parseTransactionDate(date: string): TuiDay | null {
-    if (!date) {
-      return null;
-    }
+  private initTypeWatcher(): void {
+    this.form.controls.type.valueChanges.subscribe(() => {
+      this.form.controls.category.setValue(null);
+      this.form.controls.category.markAsUntouched();
+    });
+  }
 
-    const [year, month, day] = date.split('-').map(Number);
+  private initCommentWatcher(): void {
+    this.form.controls.addComment.valueChanges.subscribe((enabled) => {
+      if (!enabled) {
+        this.form.controls.comment.setValue('');
+        this.form.controls.comment.markAsUntouched();
+      }
+    });
+  }
 
-    if (!year || !month || !day) {
-      return null;
-    }
+  private initEditingEffect(): void {
+    effect(() => {
+      const transaction = this.editingTransaction();
 
-    return new TuiDay(year, month - 1, day);
+      if (!transaction) {
+        this.lastPatchedTransactionId = null;
+        return;
+      }
+
+      if (this.lastPatchedTransactionId === transaction.id) {
+        return;
+      }
+
+      this.fillFormForEditing(transaction);
+      this.lastPatchedTransactionId = transaction.id;
+
+      requestAnimationFrame(() => {
+        this.scrollToForm();
+      });
+    });
   }
 
   private fillFormForEditing(transaction: Transaction): void {
@@ -239,7 +208,7 @@ export class TransactionFormComponent {
         type: transaction.type,
         category: transaction.category,
         amount: transaction.amount,
-        transactionDate: this.parseTransactionDate(transaction.transactionDate),
+        transactionDate: parseTransactionDate(transaction.transactionDate),
         addComment: Boolean(transaction.comment),
         comment: transaction.comment,
       },
@@ -248,10 +217,6 @@ export class TransactionFormComponent {
 
     this.form.updateValueAndValidity({ emitEvent: false });
     this.form.markAsUntouched();
-  }
-
-  cancelEdit(): void {
-    this.resetFormState();
   }
 
   private resetFormState(): void {
@@ -277,35 +242,12 @@ export class TransactionFormComponent {
     });
   }
 
-  submit(): void {
-    this.form.markAllAsTouched();
-
-    if (this.form.invalid) {
-      return;
-    }
-
-    const transaction = this.buildTransaction();
-
-    if (this.isEditMode()) {
-      this.transactionsStorage.updateTransaction(transaction);
-
-      this.alerts
-        .open('Транзакция успешно обновлена', {
-          appearance: 'success',
-          label: 'Успех',
-        })
-        .subscribe();
-    } else {
-      this.transactionsStorage.saveTransaction(transaction);
-
-      this.alerts
-        .open('Транзакция успешно сохранена', {
-          appearance: 'success',
-          label: 'Успех',
-        })
-        .subscribe();
-    }
-
-    this.resetFormState();
+  private showSuccessAlert(message: string): void {
+    this.alerts
+      .open(message, {
+        appearance: 'success',
+        label: 'Успех',
+      })
+      .subscribe();
   }
 }
