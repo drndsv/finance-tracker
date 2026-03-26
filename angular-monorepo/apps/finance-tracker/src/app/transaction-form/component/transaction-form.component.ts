@@ -117,14 +117,11 @@ export class TransactionFormComponent {
     }),
   });
 
-  readonly addCommentValue = toSignal(
-    this.form.controls.addComment.valueChanges.pipe(
-      startWith(this.form.controls.addComment.value),
-    ),
-    { initialValue: this.form.controls.addComment.value },
-  );
+  get addCommentValue(): boolean{
+    return this.form.controls.addComment.value;
+}
 
-  readonly categories = computed(() => {
+  get categories(): readonly string[] {
     const transactionType = this.form.controls.type.value;
 
     if (transactionType === 'income') {
@@ -136,7 +133,7 @@ export class TransactionFormComponent {
     }
 
     return [];
-  });
+  };
 
   constructor() {
     this.form.controls.type.valueChanges.subscribe(() => {

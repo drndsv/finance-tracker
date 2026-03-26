@@ -47,7 +47,7 @@
       <tui-data-list-wrapper
         *tuiTextfieldDropdown
         new
-        [items]="categories()"
+        [items]="categories"
       />
     </tui-textfield>
 
@@ -111,7 +111,7 @@
     </label>
   </div>
 
-  @if (addCommentValue()) {
+  @if (addCommentValue) {
     <div class="field">
       <tui-textfield>
         <label tuiLabel for="comment">Комментарий к транзакции</label>
@@ -120,7 +120,7 @@
           id="comment"
           tuiTextarea
           formControlName="comment"
-          [appCommentValidators]="addCommentValue()"
+          [appCommentValidators]="addCommentValue"
           [limit]="100"
           placeholder="Напишите комментарий"
         ></textarea>
