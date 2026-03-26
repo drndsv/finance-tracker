@@ -8,7 +8,7 @@
   } @else {
     <div class="history-list">
       @for (transaction of sortedTransactions(); track transaction.id) {
-        <div class="history-item" tuiHintDirection="top-right" [tuiHint]="transaction.comment">
+        <div class="history-item" @transactionItem tuiHintDirection="top-right" [tuiHint]="transaction.comment">
           <div class="history-item__category">
             {{ transaction.category }}
           </div>

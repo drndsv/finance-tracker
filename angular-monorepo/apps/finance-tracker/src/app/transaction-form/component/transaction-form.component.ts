@@ -84,6 +84,8 @@ export class TransactionFormComponent {
   private readonly alerts = inject(TuiAlertService);
   private readonly transactionsStorage = inject(TransactionsStorageService);
 
+  private lastPatchedTransactionId: string | null = null;
+
   readonly maxDate = TuiDay.currentLocal();
 
   readonly editingTransaction = this.transactionsStorage.editingTransaction;
@@ -157,9 +159,17 @@ export class TransactionFormComponent {
     effect(() => {
       const transaction = this.editingTransaction();
 
-      if (transaction) {
-        this.fillFormForEditing(transaction);
+      if (!transaction) {
+        this.lastPatchedTransactionId = null;
+        return;
       }
+
+      if (this.lastPatchedTransactionId === transaction.id) {
+        return;
+      }
+
+      this.fillFormForEditing(transaction);
+      this.lastPatchedTransactionId = transaction.id;
     });
   }
 
@@ -225,15 +235,19 @@ export class TransactionFormComponent {
   }
 
   private fillFormForEditing(transaction: Transaction): void {
-    this.form.patchValue({
-      type: transaction.type,
-      category: transaction.category,
-      amount: transaction.amount,
-      transactionDate: this.parseTransactionDate(transaction.transactionDate),
-      addComment: Boolean(transaction.comment),
-      comment: transaction.comment,
-    });
+    this.form.patchValue(
+      {
+        type: transaction.type,
+        category: transaction.category,
+        amount: transaction.amount,
+        transactionDate: this.parseTransactionDate(transaction.transactionDate),
+        addComment: Boolean(transaction.comment),
+        comment: transaction.comment,
+      },
+      { emitEvent: false },
+    );
 
+    this.form.updateValueAndValidity({ emitEvent: false });
     this.form.markAsUntouched();
   }
 
@@ -243,6 +257,7 @@ export class TransactionFormComponent {
 
   private resetFormState(): void {
     this.transactionsStorage.cancelEditing();
+    this.lastPatchedTransactionId = null;
 
     this.form.reset({
       type: null,
