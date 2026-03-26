@@ -3,7 +3,9 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
+  ViewChild,
 } from '@angular/core';
 import {
   FormControl,
@@ -76,6 +78,9 @@ import { Transaction } from '../types/transaction.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionFormComponent {
+  @ViewChild('transactionFormElement')
+  private readonly transactionFormElement?: ElementRef<HTMLFormElement>;
+
   readonly incomeCategories = INCOME_CATEGORIES;
   readonly expenseCategories = EXPENSE_CATEGORIES;
 
@@ -115,9 +120,9 @@ export class TransactionFormComponent {
     }),
   });
 
-  get addCommentValue(): boolean{
+  get addCommentValue(): boolean {
     return this.form.controls.addComment.value;
-}
+  }
 
   get categories(): readonly string[] {
     const transactionType = this.form.controls.type.value;
@@ -131,7 +136,7 @@ export class TransactionFormComponent {
     }
 
     return [];
-  };
+  }
 
   constructor() {
     this.form.controls.type.valueChanges.subscribe(() => {
@@ -160,6 +165,10 @@ export class TransactionFormComponent {
 
       this.fillFormForEditing(transaction);
       this.lastPatchedTransactionId = transaction.id;
+
+      requestAnimationFrame(() => {
+        this.scrollToForm();
+      });
     });
   }
 
@@ -259,6 +268,13 @@ export class TransactionFormComponent {
     });
 
     this.form.markAsUntouched();
+  }
+
+  private scrollToForm(): void {
+    this.transactionFormElement?.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   }
 
   submit(): void {
