@@ -6,9 +6,9 @@ import {
   effect,
   ElementRef,
   inject,
-  signal,
   viewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
 import { TuiDay } from '@taiga-ui/cdk';
@@ -93,14 +93,9 @@ export class TransactionFormComponent {
   readonly form = createTransactionForm();
   readonly controls = this.form.controls;
 
-  readonly categories = signal<readonly string[]>([]);
-  readonly isCommentVisible = signal(false);
-
   constructor() {
     this.initTypeWatcher();
-    this.initCommentWatcher();
     this.initEditingEffect();
-    this.syncUiStateFromForm();
   }
 
   cancelEdit(): void {
@@ -130,22 +125,14 @@ export class TransactionFormComponent {
     this.resetFormState();
   }
 
-  private initTypeWatcher(): void {
-    this.controls.type.valueChanges.subscribe((type) => {
-      this.controls.category.setValue(null);
-      this.controls.category.markAsUntouched();
-      this.categories.set(this.getCategoriesByType(type));
-    });
+  getCategories(): readonly string[] {
+    return this.getCategoriesByType(this.controls.type.value);
   }
 
-  private initCommentWatcher(): void {
-    this.controls.addComment.valueChanges.subscribe((enabled) => {
-      this.isCommentVisible.set(enabled);
-
-      if (!enabled) {
-        this.controls.comment.setValue('');
-        this.controls.comment.markAsUntouched();
-      }
+  private initTypeWatcher(): void {
+    this.controls.type.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.controls.category.setValue(null);
+      this.controls.category.markAsUntouched();
     });
   }
 
@@ -184,7 +171,6 @@ export class TransactionFormComponent {
       { emitEvent: false },
     );
 
-    this.syncUiStateFromForm();
     this.form.updateValueAndValidity({ emitEvent: false });
     this.form.markAsUntouched();
   }
@@ -202,13 +188,7 @@ export class TransactionFormComponent {
       comment: '',
     });
 
-    this.syncUiStateFromForm();
     this.form.markAsUntouched();
-  }
-
-  private syncUiStateFromForm(): void {
-    this.categories.set(this.getCategoriesByType(this.controls.type.value));
-    this.isCommentVisible.set(this.controls.addComment.value);
   }
 
   private getCategoriesByType(

@@ -42,7 +42,7 @@
         placeholder="Выберите категорию"
       />
 
-      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="categories()" />
+      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="getCategories()" />
     </tui-textfield>
 
     @if (controls.category.touched) {
@@ -112,7 +112,7 @@
     </label>
   </div>
 
-  <div class="field" [class.field_hidden]="!isCommentVisible()">
+  <div class="field" [class.field_hidden]="!controls.addComment.value">
     <tui-textfield>
       <label tuiLabel for="comment">Комментарий к транзакции</label>
 
@@ -120,13 +120,13 @@
         id="comment"
         tuiTextarea
         formControlName="comment"
-        [appCommentValidators]="isCommentVisible()"
+        [appCommentValidators]="controls.addComment.value"
         [limit]="100"
         placeholder="Напишите комментарий"
       ></textarea>
     </tui-textfield>
 
-    @if (isCommentVisible() && controls.comment.touched) {
+    @if (controls.addComment.value && controls.comment.touched) {
       <tui-error
         [formControl]="controls.comment"
         [error]="[] | tuiFieldError | async"
