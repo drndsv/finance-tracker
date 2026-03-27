@@ -28,6 +28,7 @@ import {
 } from '@taiga-ui/kit';
 
 import { AlertService } from '../../shared/services/alert.service';
+import { TransactionEditingService } from '../../shared/services/transaction-editing.service';
 import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import {
   EXPENSE_CATEGORIES,
@@ -82,10 +83,11 @@ export class TransactionFormComponent {
 
   private readonly alerts = inject(AlertService);
   private readonly transactionsStorage = inject(TransactionsStorageService);
+  private readonly editingService = inject(TransactionEditingService);
 
   private lastPatchedTransactionId: string | null = null;
 
-  readonly editingTransaction = this.transactionsStorage.editingTransaction;
+  readonly editingTransaction = this.editingService.editingTransaction;
   readonly isEditMode = computed(() => this.editingTransaction() !== null);
 
   readonly form = createTransactionForm();
@@ -217,7 +219,7 @@ export class TransactionFormComponent {
   }
 
   private resetFormState(): void {
-    this.transactionsStorage.cancelEditing();
+    this.editingService.cancelEditing();
     this.lastPatchedTransactionId = null;
 
     this.form.reset({

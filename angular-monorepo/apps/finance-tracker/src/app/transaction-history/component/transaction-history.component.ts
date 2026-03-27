@@ -9,6 +9,7 @@ import {
 import { TuiButton, TuiHint } from '@taiga-ui/core';
 
 import { AlertService } from '../../shared/services/alert.service';
+import { TransactionEditingService } from '../../shared/services/transaction-editing.service';
 import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import { Transaction } from '../../transaction-form/types/transaction.types';
 import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
@@ -39,6 +40,7 @@ import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
 })
 export class TransactionHistoryComponent {
   private readonly transactionsStorage = inject(TransactionsStorageService);
+  private readonly editingService = inject(TransactionEditingService);
   private readonly alerts = inject(AlertService);
 
   readonly sortedTransactions = computed(() => {
@@ -50,11 +52,15 @@ export class TransactionHistoryComponent {
   });
 
   editTransaction(transaction: Transaction): void {
-    this.transactionsStorage.startEditing(transaction);
+    this.editingService.startEditing(transaction);
     this.alerts.info('Вы редактируете транзакцию');
   }
 
   deleteTransaction(transactionId: string): void {
+    if (this.editingService.editingTransaction()?.id === transactionId) {
+      this.editingService.cancelEditing();
+    }
+
     this.transactionsStorage.deleteTransaction(transactionId);
     this.alerts.warning('Транзакция удалена');
   }

@@ -12,8 +12,6 @@ export class TransactionsStorageService {
     this.readTransactionsFromStorage(),
   );
 
-  readonly editingTransaction = signal<Transaction | null>(null);
-
   saveTransaction(transaction: Transaction): void {
     const updatedTransactions = [transaction, ...this.transactions()];
 
@@ -37,20 +35,8 @@ export class TransactionsStorageService {
       (transaction) => transaction.id !== transactionId,
     );
 
-    if (this.editingTransaction()?.id === transactionId) {
-      this.editingTransaction.set(null);
-    }
-
     this.transactions.set(updatedTransactions);
     this.saveTransactionsToStorage(updatedTransactions);
-  }
-
-  startEditing(transaction: Transaction): void {
-    this.editingTransaction.set(transaction);
-  }
-
-  cancelEditing(): void {
-    this.editingTransaction.set(null);
   }
 
   private readTransactionsFromStorage(): Transaction[] {
