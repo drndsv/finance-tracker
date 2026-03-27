@@ -1,12 +1,12 @@
 <section class="statistics">
-  <h2 class="title">Статистика</h2>
+  <h2 class="title">{{ texts.title }}</h2>
 
   <div class="statistics-grid">
     <div class="statistics-card">
-      <h3 class="statistics-card__title">Доходы</h3>
+      <h3 class="statistics-card__title">{{ texts.sections.income }}</h3>
 
       @if (incomeValues().length === 0) {
-        <div class="empty-state">Нет данных по доходам</div>
+        <div class="empty-state">{{ texts.emptyState.income }}</div>
       } @else {
         <tui-ring-chart
           class="chart"
@@ -21,10 +21,10 @@
     </div>
 
     <div class="statistics-card">
-      <h3 class="statistics-card__title">Расходы</h3>
+      <h3 class="statistics-card__title">{{ texts.sections.expense }}</h3>
 
       @if (expenseValues().length === 0) {
-        <div class="empty-state">Нет данных по расходам</div>
+        <div class="empty-state">{{ texts.emptyState.expense }}</div>
       } @else {
         <tui-ring-chart
           class="chart"

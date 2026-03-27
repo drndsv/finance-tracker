@@ -1,8 +1,8 @@
 <section class="history">
-  <h2 class="title">История транзакций</h2>
+  <h2 class="title">{{ texts.title }}</h2>
 
   @if (sortedTransactions().length === 0) {
-    <div class="empty-state">Пока нет ни одной транзакции</div>
+    <div class="empty-state">{{ texts.emptyState }}</div>
   } @else {
     <div class="history-list">
       @for (transaction of sortedTransactions(); track transaction.id) {
@@ -33,7 +33,7 @@
                 appearance="secondary"
                 (click)="editTransaction(transaction)"
               >
-                Редактировать
+                {{ texts.buttons.edit }}
               </button>
 
               <button
@@ -43,7 +43,7 @@
                 appearance="secondary"
                 (click)="deleteTransaction(transaction.id)"
               >
-                Удалить
+                {{ texts.buttons.delete }}
               </button>
             </div>
           </div>

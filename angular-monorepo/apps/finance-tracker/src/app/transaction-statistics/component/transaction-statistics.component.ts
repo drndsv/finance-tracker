@@ -12,6 +12,7 @@ import { tuiSum } from '@taiga-ui/cdk';
 
 import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import { TransactionType } from '../../transaction-form/types/transaction-form.types';
+import { TRANSACTION_STATISTICS_TEXTS } from '../constants/transaction-statistics-texts';
 import {
   buildChartItems,
   getActiveChartLabel,
@@ -28,6 +29,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionStatisticsComponent {
+  readonly texts = TRANSACTION_STATISTICS_TEXTS;
+
   private readonly transactionsStorage = inject(TransactionsStorageService);
 
   readonly transactions = this.transactionsStorage.transactions;
@@ -67,7 +70,7 @@ export class TransactionStatisticsComponent {
     getActiveChartLabel(
       this.incomeIndex(),
       this.incomeLabels(),
-      'Всего доходов',
+      this.texts.labels.incomeTotal,
     ),
   );
 
@@ -75,7 +78,7 @@ export class TransactionStatisticsComponent {
     getActiveChartLabel(
       this.expenseIndex(),
       this.expenseLabels(),
-      'Всего расходов',
+      this.texts.labels.expenseTotal,
     ),
   );
 

@@ -5,11 +5,11 @@
   (ngSubmit)="submit()"
 >
   <h2 class="title">
-    {{ isEditMode() ? 'Редактирование транзакции' : 'Добавление транзакции' }}
+    {{ isEditMode() ? texts.titles.edit : texts.titles.create }}
   </h2>
 
   <div class="field">
-    <div class="label">Вид транзакции</div>
+    <div class="label">{{ texts.labels.type }}</div>
 
     <div tuiGroup class="group" [collapsed]="true">
       <label tuiBlock>
@@ -32,14 +32,14 @@
   </div>
 
   <div class="field">
-    <label class="label" for="category">Категория транзакции</label>
+    <label class="label" for="category">{{ texts.labels.category }}</label>
 
     <tui-textfield tuiChevron>
       <input
         id="category"
         tuiSelect
         formControlName="category"
-        placeholder="Выберите категорию"
+        [placeholder]="texts.placeholders.category"
       />
 
       <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="getCategories()" />
@@ -54,14 +54,14 @@
   </div>
 
   <div class="field">
-    <label class="label" for="amount">Сумма транзакции</label>
+    <label class="label" for="amount">{{ texts.labels.amount }}</label>
 
     <tui-textfield>
       <input
         id="amount"
         tuiInputNumber
         formControlName="amount"
-        placeholder="Введите сумму"
+        [placeholder]="texts.placeholders.amount"
         [postfix]="' ' + ('RUB' | tuiCurrency)"
       />
     </tui-textfield>
@@ -84,7 +84,7 @@
   </div>
 
   <div class="field">
-    <label class="label" for="transactionDate">Дата транзакции</label>
+    <label class="label" for="transactionDate">{{ texts.labels.date }}</label>
 
     <tui-textfield>
       <input
@@ -92,7 +92,7 @@
         tuiInputDate
         formControlName="transactionDate"
         [max]="maxDate"
-        placeholder="Выберите дату"
+        [placeholder]="texts.placeholders.date"
       />
       <tui-calendar *tuiTextfieldDropdown />
     </tui-textfield>
@@ -108,13 +108,13 @@
   <div class="field">
     <label class="checkbox-row">
       <input tuiCheckbox type="checkbox" formControlName="addComment" />
-      Добавить комментарий
+      {{ texts.labels.addComment }}
     </label>
   </div>
 
   <div class="field" [class.field_hidden]="!controls.addComment.value">
     <tui-textfield>
-      <label tuiLabel for="comment">Комментарий к транзакции</label>
+      <label tuiLabel for="comment">{{ texts.labels.comment }}</label>
 
       <textarea
         id="comment"
@@ -122,7 +122,7 @@
         formControlName="comment"
         [appCommentValidators]="controls.addComment.value"
         [limit]="100"
-        placeholder="Напишите комментарий"
+        [placeholder]="texts.placeholders.comment"
       ></textarea>
     </tui-textfield>
 
@@ -136,7 +136,7 @@
 
   <div class="actions">
     <button tuiButton type="submit" appearance="primary">
-      {{ isEditMode() ? 'Сохранить изменения' : 'Сохранить' }}
+      {{ isEditMode() ? texts.buttons.saveChanges : texts.buttons.save }}
     </button>
 
     @if (isEditMode()) {
@@ -146,7 +146,7 @@
         appearance="secondary"
         (click)="cancelEdit()"
       >
-        Отмена
+        {{ texts.buttons.cancel }}
       </button>
     }
   </div>

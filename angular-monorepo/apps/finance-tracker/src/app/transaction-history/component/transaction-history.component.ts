@@ -12,6 +12,7 @@ import { AlertService } from '../../shared/services/alerts/alert.service';
 import { TransactionEditingService } from '../../shared/services/transaction-editing.service';
 import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import { Transaction } from '../../transaction-form/types/transaction.types';
+import { TRANSACTION_HISTORY_TEXTS } from '../constants/transaction-history-texts';
 import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
 
 @Component({
@@ -39,6 +40,8 @@ import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
   ],
 })
 export class TransactionHistoryComponent {
+  readonly texts = TRANSACTION_HISTORY_TEXTS;
+
   private readonly transactionsStorage = inject(TransactionsStorageService);
   private readonly editingService = inject(TransactionEditingService);
   private readonly alerts = inject(AlertService);
@@ -53,7 +56,7 @@ export class TransactionHistoryComponent {
 
   editTransaction(transaction: Transaction): void {
     this.editingService.startEditing(transaction);
-    this.alerts.info('Вы редактируете транзакцию');
+    this.alerts.info(this.texts.alerts.editing);
   }
 
   deleteTransaction(transactionId: string): void {
@@ -62,6 +65,6 @@ export class TransactionHistoryComponent {
     }
 
     this.transactionsStorage.deleteTransaction(transactionId);
-    this.alerts.warning('Транзакция удалена');
+    this.alerts.warning(this.texts.alerts.deleted);
   }
 }

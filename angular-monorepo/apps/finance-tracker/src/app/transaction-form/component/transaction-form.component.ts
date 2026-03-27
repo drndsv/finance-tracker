@@ -36,6 +36,7 @@ import {
   EXPENSE_CATEGORIES,
   INCOME_CATEGORIES,
 } from '../constants/transaction-categories';
+import { TRANSACTION_FORM_TEXTS } from '../constants/transaction-form-texts';
 import { TRANSACTION_VALIDATION_ERRORS } from '../constants/transaction-validation-errors';
 import { CommentValidatorsDirective } from '../directives/comment-validators.directive';
 import { createTransactionForm } from '../forms/transaction-form.factory';
@@ -80,6 +81,7 @@ export class TransactionFormComponent implements OnInit {
 
   readonly incomeCategories = INCOME_CATEGORIES;
   readonly expenseCategories = EXPENSE_CATEGORIES;
+  readonly texts = TRANSACTION_FORM_TEXTS;
   readonly maxDate = TuiDay.currentLocal();
 
   private readonly alerts = inject(AlertService);
@@ -120,10 +122,10 @@ export class TransactionFormComponent implements OnInit {
 
     if (this.isEditMode()) {
       this.transactionsStorage.updateTransaction(transaction);
-      this.alerts.success('Транзакция успешно обновлена');
+      this.alerts.success(TRANSACTION_FORM_TEXTS.success.updated);
     } else {
       this.transactionsStorage.saveTransaction(transaction);
-      this.alerts.success('Транзакция успешно сохранена');
+      this.alerts.success(TRANSACTION_FORM_TEXTS.success.created);
     }
 
     this.resetFormState();
