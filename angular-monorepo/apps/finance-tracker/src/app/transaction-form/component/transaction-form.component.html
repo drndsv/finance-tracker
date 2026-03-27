@@ -23,9 +23,9 @@
       </label>
     </div>
 
-    @if (typeControl.touched) {
+    @if (controls.type.touched) {
       <tui-error
-        [formControl]="typeControl"
+        [formControl]="controls.type"
         [error]="[] | tuiFieldError | async"
       />
     }
@@ -42,12 +42,12 @@
         placeholder="Выберите категорию"
       />
 
-      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="categories" />
+      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="categories()" />
     </tui-textfield>
 
-    @if (categoryControl.touched) {
+    @if (controls.category.touched) {
       <tui-error
-        [formControl]="categoryControl"
+        [formControl]="controls.category"
         [error]="[] | tuiFieldError | async"
       />
     }
@@ -66,18 +66,18 @@
       />
     </tui-textfield>
 
-    @if (amountControl.value !== null && !amountControl.hasError('required')) {
+    @if (controls.amount.value !== null && !controls.amount.hasError('required')) {
       <div class="hint">
         Сумма:
         {{
-          amountControl.value | currency: 'RUB' : 'symbol' : '1.2-2' : 'ru-RU'
+          controls.amount.value | currency: 'RUB' : 'symbol' : '1.2-2' : 'ru-RU'
         }}
       </div>
     }
 
-    @if (amountControl.touched) {
+    @if (controls.amount.touched) {
       <tui-error
-        [formControl]="amountControl"
+        [formControl]="controls.amount"
         [error]="[] | tuiFieldError | async"
       />
     }
@@ -97,9 +97,9 @@
       <tui-calendar *tuiTextfieldDropdown />
     </tui-textfield>
 
-    @if (transactionDateControl.touched) {
+    @if (controls.transactionDate.touched) {
       <tui-error
-        [formControl]="transactionDateControl"
+        [formControl]="controls.transactionDate"
         [error]="[] | tuiFieldError | async"
       />
     }
@@ -112,7 +112,7 @@
     </label>
   </div>
 
-  <div class="field" [class.field_hidden]="!addCommentValue">
+  <div class="field" [class.field_hidden]="!isCommentVisible()">
     <tui-textfield>
       <label tuiLabel for="comment">Комментарий к транзакции</label>
 
@@ -120,15 +120,15 @@
         id="comment"
         tuiTextarea
         formControlName="comment"
-        [appCommentValidators]="addCommentValue"
+        [appCommentValidators]="isCommentVisible()"
         [limit]="100"
         placeholder="Напишите комментарий"
       ></textarea>
     </tui-textfield>
 
-    @if (addCommentValue && commentControl.touched) {
+    @if (isCommentVisible() && controls.comment.touched) {
       <tui-error
-        [formControl]="commentControl"
+        [formControl]="controls.comment"
         [error]="[] | tuiFieldError | async"
       />
     }

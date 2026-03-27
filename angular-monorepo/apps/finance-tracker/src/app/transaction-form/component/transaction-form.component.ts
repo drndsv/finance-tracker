@@ -6,9 +6,10 @@ import {
   effect,
   ElementRef,
   inject,
+  signal,
   viewChild,
 } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
 import { TuiDay } from '@taiga-ui/cdk';
 import { TuiButton, TuiError, TuiGroup, TuiTextfield } from '@taiga-ui/core';
@@ -38,7 +39,6 @@ import { TRANSACTION_VALIDATION_ERRORS } from '../constants/transaction-validati
 import { CommentValidatorsDirective } from '../directives/comment-validators.directive';
 import { createTransactionForm } from '../forms/transaction-form.factory';
 import { buildTransactionFromForm } from '../mappers/transaction-form.mapper';
-import { TransactionType } from '../types/transaction-form.types';
 import { Transaction } from '../types/transaction.types';
 import { parseTransactionDate } from '../utils/transaction-date.util';
 
@@ -91,49 +91,16 @@ export class TransactionFormComponent {
   readonly isEditMode = computed(() => this.editingTransaction() !== null);
 
   readonly form = createTransactionForm();
+  readonly controls = this.form.controls;
 
-  get addCommentValue(): boolean {
-    return this.form.controls.addComment.value;
-  }
-
-  get categories(): readonly string[] {
-    const transactionType = this.form.controls.type.value;
-
-    if (transactionType === 'income') {
-      return this.incomeCategories;
-    }
-
-    if (transactionType === 'expense') {
-      return this.expenseCategories;
-    }
-
-    return [];
-  }
+  readonly categories = signal<readonly string[]>([]);
+  readonly isCommentVisible = signal(false);
 
   constructor() {
     this.initTypeWatcher();
     this.initCommentWatcher();
     this.initEditingEffect();
-  }
-
-  get typeControl(): FormControl<TransactionType | null> {
-    return this.form.controls.type;
-  }
-
-  get categoryControl(): FormControl<string | null> {
-    return this.form.controls.category;
-  }
-
-  get amountControl(): FormControl<number | null> {
-    return this.form.controls.amount;
-  }
-
-  get transactionDateControl(): FormControl<TuiDay | null> {
-    return this.form.controls.transactionDate;
-  }
-
-  get commentControl(): FormControl<string> {
-    return this.form.controls.comment;
+    this.syncUiStateFromForm();
   }
 
   cancelEdit(): void {
@@ -164,17 +131,20 @@ export class TransactionFormComponent {
   }
 
   private initTypeWatcher(): void {
-    this.form.controls.type.valueChanges.subscribe(() => {
-      this.form.controls.category.setValue(null);
-      this.form.controls.category.markAsUntouched();
+    this.controls.type.valueChanges.subscribe((type) => {
+      this.controls.category.setValue(null);
+      this.controls.category.markAsUntouched();
+      this.categories.set(this.getCategoriesByType(type));
     });
   }
 
   private initCommentWatcher(): void {
-    this.form.controls.addComment.valueChanges.subscribe((enabled) => {
+    this.controls.addComment.valueChanges.subscribe((enabled) => {
+      this.isCommentVisible.set(enabled);
+
       if (!enabled) {
-        this.form.controls.comment.setValue('');
-        this.form.controls.comment.markAsUntouched();
+        this.controls.comment.setValue('');
+        this.controls.comment.markAsUntouched();
       }
     });
   }
@@ -214,6 +184,7 @@ export class TransactionFormComponent {
       { emitEvent: false },
     );
 
+    this.syncUiStateFromForm();
     this.form.updateValueAndValidity({ emitEvent: false });
     this.form.markAsUntouched();
   }
@@ -231,7 +202,27 @@ export class TransactionFormComponent {
       comment: '',
     });
 
+    this.syncUiStateFromForm();
     this.form.markAsUntouched();
+  }
+
+  private syncUiStateFromForm(): void {
+    this.categories.set(this.getCategoriesByType(this.controls.type.value));
+    this.isCommentVisible.set(this.controls.addComment.value);
+  }
+
+  private getCategoriesByType(
+    type: 'income' | 'expense' | null,
+  ): readonly string[] {
+    if (type === 'income') {
+      return this.incomeCategories;
+    }
+
+    if (type === 'expense') {
+      return this.expenseCategories;
+    }
+
+    return [];
   }
 
   private scrollToForm(): void {
