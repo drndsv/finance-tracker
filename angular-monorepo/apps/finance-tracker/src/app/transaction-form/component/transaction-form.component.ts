@@ -6,6 +6,7 @@ import {
   effect,
   ElementRef,
   inject,
+  OnInit,
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -72,7 +73,7 @@ import { parseTransactionDate } from '../utils/transaction-date.util';
   styleUrl: './transaction-form.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TransactionFormComponent {
+export class TransactionFormComponent implements OnInit {
   private readonly transactionFormElement = viewChild<
     ElementRef<HTMLFormElement>
   >('transactionFormElement');
@@ -94,8 +95,11 @@ export class TransactionFormComponent {
   readonly controls = this.form.controls;
 
   constructor() {
-    this.initTypeWatcher();
     this.initEditingEffect();
+  }
+
+  ngOnInit(): void {
+    this.initTypeWatcher();
   }
 
   cancelEdit(): void {
