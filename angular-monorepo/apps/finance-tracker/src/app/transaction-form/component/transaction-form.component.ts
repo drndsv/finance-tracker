@@ -6,7 +6,7 @@ import {
   effect,
   ElementRef,
   inject,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
@@ -72,8 +72,9 @@ import { parseTransactionDate } from '../utils/transaction-date.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionFormComponent {
-  @ViewChild('transactionFormElement')
-  private readonly transactionFormElement?: ElementRef<HTMLFormElement>;
+  private readonly transactionFormElement = viewChild<
+    ElementRef<HTMLFormElement>
+  >('transactionFormElement');
 
   readonly incomeCategories = INCOME_CATEGORIES;
   readonly expenseCategories = EXPENSE_CATEGORIES;
@@ -232,7 +233,7 @@ export class TransactionFormComponent {
   }
 
   private scrollToForm(): void {
-    this.transactionFormElement?.nativeElement.scrollIntoView({
+    this.transactionFormElement()?.nativeElement.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
     });
