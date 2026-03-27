@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { TuiButton, TuiHint } from '@taiga-ui/core';
 
-import { AlertService } from '../../shared/services/alert.service';
+import { AlertService } from '../../shared/services/alerts/alert.service';
 import { TransactionEditingService } from '../../shared/services/transaction-editing.service';
 import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import { Transaction } from '../../transaction-form/types/transaction.types';

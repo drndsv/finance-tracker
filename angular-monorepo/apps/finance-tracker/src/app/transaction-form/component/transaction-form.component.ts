@@ -27,7 +27,7 @@ import {
   tuiValidationErrorsProvider,
 } from '@taiga-ui/kit';
 
-import { AlertService } from '../../shared/services/alert.service';
+import { AlertService } from '../../shared/services/alerts/alert.service';
 import { TransactionEditingService } from '../../shared/services/transaction-editing.service';
 import { TransactionsStorageService } from '../../shared/services/transactions-storage.service';
 import {

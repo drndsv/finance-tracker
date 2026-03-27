@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { TuiAlertService } from '@taiga-ui/core';
 
-type AlertAppearance = 'success' | 'error' | 'info' | 'warning';
+import { ALERT_LABELS } from './alert.constants';
+import { AlertAppearance } from './alert.types';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class AlertService {
   show(
     message: string,
     appearance: AlertAppearance = 'info',
-    label = 'Уведомление',
+    label: string = ALERT_LABELS.DEFAULT,
   ): void {
     this.alerts
       .open(message, {
@@ -23,18 +24,18 @@ export class AlertService {
   }
 
   success(message: string): void {
-    this.show(message, 'success', 'Успех');
+    this.show(message, 'success', ALERT_LABELS.SUCCESS);
   }
 
   error(message: string): void {
-    this.show(message, 'error', 'Ошибка');
+    this.show(message, 'error', ALERT_LABELS.ERROR);
   }
 
   info(message: string): void {
-    this.show(message, 'info', 'Информация');
+    this.show(message, 'info', ALERT_LABELS.INFO);
   }
 
   warning(message: string): void {
-    this.show(message, 'warning', 'Внимание');
+    this.show(message, 'warning', ALERT_LABELS.WARNING);
   }
 }
