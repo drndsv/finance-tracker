@@ -1,0 +1,159 @@
+<form
+  #transactionFormElement
+  class="form"
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+>
+  <h2 class="title">
+    {{ isEditMode() ? texts.titles.edit : texts.titles.create }}
+  </h2>
+
+  <div class="field">
+    <div class="label">{{ texts.labels.type }}</div>
+
+    <div tuiGroup class="group" [collapsed]="true">
+      <label tuiBlock>
+        <input tuiRadio type="radio" formControlName="type" value="income" />
+        Доход
+      </label>
+
+      <label tuiBlock>
+        <input tuiRadio type="radio" formControlName="type" value="expense" />
+        Расход
+      </label>
+    </div>
+
+    @if (controls.type.touched) {
+      <tui-error
+        [formControl]="controls.type"
+        [error]="[] | tuiFieldError | async"
+      />
+    }
+  </div>
+
+  <div class="field">
+    <label class="label" for="category">{{ texts.labels.category }}</label>
+
+    <tui-textfield tuiChevron>
+      <input
+        id="category"
+        tuiSelect
+        formControlName="category"
+        [placeholder]="texts.placeholders.category"
+      />
+
+      <tui-data-list-wrapper
+        *tuiTextfieldDropdown
+        new
+        [items]="getCategories()"
+      />
+    </tui-textfield>
+
+    @if (controls.category.touched) {
+      <tui-error
+        [formControl]="controls.category"
+        [error]="[] | tuiFieldError | async"
+      />
+    }
+  </div>
+
+  <div class="field">
+    <label class="label" for="amount">{{ texts.labels.amount }}</label>
+
+    <tui-textfield>
+      <input
+        id="amount"
+        tuiInputNumber
+        formControlName="amount"
+        [placeholder]="texts.placeholders.amount"
+        [postfix]="' ' + ('RUB' | tuiCurrency)"
+      />
+    </tui-textfield>
+
+    @if (
+      controls.amount.value !== null && !controls.amount.hasError('required')
+    ) {
+      <div class="hint">
+        Сумма:
+        {{
+          controls.amount.value | currency: 'RUB' : 'symbol' : '1.2-2' : 'ru-RU'
+        }}
+      </div>
+    }
+
+    @if (controls.amount.touched) {
+      <tui-error
+        [formControl]="controls.amount"
+        [error]="[] | tuiFieldError | async"
+      />
+    }
+  </div>
+
+  <div class="field">
+    <label class="label" for="transactionDate">{{ texts.labels.date }}</label>
+
+    <tui-textfield>
+      <input
+        id="transactionDate"
+        tuiInputDate
+        formControlName="transactionDate"
+        [max]="maxDate"
+        [placeholder]="texts.placeholders.date"
+      />
+      <tui-calendar *tuiTextfieldDropdown />
+    </tui-textfield>
+
+    @if (controls.transactionDate.touched) {
+      <tui-error
+        [formControl]="controls.transactionDate"
+        [error]="[] | tuiFieldError | async"
+      />
+    }
+  </div>
+
+  <div class="field">
+    <label class="checkbox-row">
+      <input tuiCheckbox type="checkbox" formControlName="addComment" />
+      {{ texts.labels.addComment }}
+    </label>
+  </div>
+
+  <div class="field" [class.field_hidden]="!controls.addComment.value">
+    <tui-textfield>
+      <label tuiLabel for="comment">{{ texts.labels.comment }}</label>
+
+      <textarea
+        id="comment"
+        tuiTextarea
+        formControlName="comment"
+        [appCommentValidators]="controls.addComment.value"
+        [limit]="100"
+        [placeholder]="texts.placeholders.comment"
+      ></textarea>
+    </tui-textfield>
+
+    @if (controls.addComment.value && controls.comment.touched) {
+      <tui-error
+        [formControl]="controls.comment"
+        [error]="[] | tuiFieldError | async"
+      />
+    }
+  </div>
+
+  <div class="actions">
+    <button tuiButton type="submit" appearance="primary">
+      {{ isEditMode() ? texts.buttons.saveChanges : texts.buttons.save }}
+    </button>
+
+    @if (isEditMode()) {
+      <button
+        tuiButton
+        type="button"
+        appearance="secondary"
+        (click)="cancelEdit()"
+      >
+        {{ texts.buttons.cancel }}
+      </button>
+    }
+  </div>
+</form>

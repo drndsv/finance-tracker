@@ -1,0 +1,54 @@
+<section class="history">
+  <h2 class="title">{{ texts.title }}</h2>
+
+  @if (sortedTransactions().length === 0) {
+    <div class="empty-state">{{ texts.emptyState }}</div>
+  } @else {
+    <div class="history-list">
+      @for (transaction of sortedTransactions(); track transaction.id) {
+        <div
+          class="history-item"
+          @transactionItem
+          tuiHintDirection="top-right"
+          [tuiHint]="transaction.comment"
+        >
+          <div class="history-item__category">
+            {{ transaction.category }}
+          </div>
+
+          <div class="history-item__meta">
+            <div class="history-item__amount">
+              {{ transaction.amount | transactionAmount: transaction.type }}
+            </div>
+
+            <div class="history-item__date">
+              {{ transaction.transactionDate | date: 'dd.MM.yyyy' }}
+            </div>
+
+            <div class="history-item__actions">
+              <button
+                tuiButton
+                type="button"
+                size="s"
+                appearance="secondary"
+                (click)="editTransaction(transaction)"
+              >
+                {{ texts.buttons.edit }}
+              </button>
+
+              <button
+                tuiButton
+                type="button"
+                size="s"
+                appearance="secondary"
+                (click)="deleteTransaction(transaction.id)"
+              >
+                {{ texts.buttons.delete }}
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>
