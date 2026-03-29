@@ -29,9 +29,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionStatisticsComponent {
-  readonly texts = TRANSACTION_STATISTICS_TEXTS;
-
   private readonly transactionsStorage = inject(TransactionsStorageService);
+
+  readonly texts = TRANSACTION_STATISTICS_TEXTS;
 
   readonly transactions = this.transactionsStorage.transactions;
 

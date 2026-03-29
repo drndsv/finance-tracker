@@ -40,11 +40,11 @@ import { TransactionAmountPipe } from '../pipes/transaction-amount-pipe';
   ],
 })
 export class TransactionHistoryComponent {
-  readonly texts = TRANSACTION_HISTORY_TEXTS;
-
   private readonly transactionsStorage = inject(TransactionsStorageService);
   private readonly editingService = inject(TransactionEditingService);
   private readonly alerts = inject(AlertService);
+
+  readonly texts = TRANSACTION_HISTORY_TEXTS;
 
   readonly sortedTransactions = computed(() => {
     return [...this.transactionsStorage.transactions()].sort(

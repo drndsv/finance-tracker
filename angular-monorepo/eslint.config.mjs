@@ -73,4 +73,30 @@ export default [
       'import/no-duplicates': 'error',
     },
   },
+
+  {
+    files: ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'],
+    rules: {
+      '@typescript-eslint/member-ordering': [
+        'error',
+        {
+          default: [
+            'private-instance-field',
+            'private-static-field',
+
+            'public-instance-field',
+            'public-static-field',
+
+            'constructor',
+
+            'public-instance-method',
+            'public-static-method',
+
+            'private-instance-method',
+            'private-static-method',
+          ],
+        },
+      ],
+    },
+  },
 ];

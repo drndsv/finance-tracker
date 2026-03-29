@@ -42,7 +42,11 @@
         [placeholder]="texts.placeholders.category"
       />
 
-      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="getCategories()" />
+      <tui-data-list-wrapper
+        *tuiTextfieldDropdown
+        new
+        [items]="getCategories()"
+      />
     </tui-textfield>
 
     @if (controls.category.touched) {
@@ -66,7 +70,9 @@
       />
     </tui-textfield>
 
-    @if (controls.amount.value !== null && !controls.amount.hasError('required')) {
+    @if (
+      controls.amount.value !== null && !controls.amount.hasError('required')
+    ) {
       <div class="hint">
         Сумма:
         {{

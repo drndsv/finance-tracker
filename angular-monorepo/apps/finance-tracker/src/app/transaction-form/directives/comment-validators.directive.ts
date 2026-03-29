@@ -11,12 +11,12 @@ import { NgControl, Validators } from '@angular/forms';
   selector: '[appCommentValidators]',
 })
 export class CommentValidatorsDirective implements OnChanges {
-  @Input({ required: true }) appCommentValidators = false;
-
   private readonly ngControl = inject(NgControl, {
     self: true,
     optional: true,
   });
+
+  @Input({ required: true }) appCommentValidators = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!('appCommentValidators' in changes) || !this.ngControl?.control) {

@@ -79,16 +79,16 @@ export class TransactionFormComponent implements OnInit {
     ElementRef<HTMLFormElement>
   >('transactionFormElement');
 
-  readonly incomeCategories = INCOME_CATEGORIES;
-  readonly expenseCategories = EXPENSE_CATEGORIES;
-  readonly texts = TRANSACTION_FORM_TEXTS;
-  readonly maxDate = TuiDay.currentLocal();
-
   private readonly alerts = inject(AlertService);
   private readonly transactionsStorage = inject(TransactionsStorageService);
   private readonly editingService = inject(TransactionEditingService);
 
   private lastPatchedTransactionId: string | null = null;
+
+  readonly incomeCategories = INCOME_CATEGORIES;
+  readonly expenseCategories = EXPENSE_CATEGORIES;
+  readonly texts = TRANSACTION_FORM_TEXTS;
+  readonly maxDate = TuiDay.currentLocal();
 
   readonly editingTransaction = this.editingService.editingTransaction;
   readonly isEditMode = computed(() => this.editingTransaction() !== null);
